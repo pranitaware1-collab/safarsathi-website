@@ -52,12 +52,14 @@ export const DestinationDetailsPage = () => {
   };
 
   const handleShare = async () => {
-    if (navigator.share) {
-      const shareData = {
-        title: `Trip to ${destination.name} - SafarSathi`,
-        text: `Check out this amazing trip to ${destination.name}! Estimated budget: ${destination.budgetEstimate}. See the full itinerary on SafarSathi.`,
-        url: window.location.href,
-      };
+  if (!destination) return;
+
+  if (navigator.share) {
+    const shareData = {
+      title: `Trip to ${destination.name} - SafarSathi`,
+      text: `Check out this amazing trip to ${destination.name}! Estimated budget: ${destination.budgetEstimate}. See the full itinerary on SafarSathi.`,
+      url: window.location.href,
+    };
       try {
         await navigator.share(shareData);
       } catch (err) {
