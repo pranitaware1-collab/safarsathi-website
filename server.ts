@@ -41,15 +41,23 @@ app.post("/api/contact", async (req, res) => {
   try {
     console.log("Contact received:", req.body);
 
-    // send email
+    // EMAIL TO OWNER
     await transporter.sendMail({
       from: process.env.EMAIL_USER,
-      to: process.env.EMAIL_USER, // YOUR OWNER EMAIL
+      to: process.env.EMAIL_USER, // owner email
       subject: `New Contact Message from ${name}`,
       text: `Name: ${name}\nEmail: ${email}\nMessage: ${message}`,
     });
 
-    res.json({ success: true, message: "Message sent to email!" });
+    // EMAIL TO USER
+    await transporter.sendMail({
+      from: process.env.EMAIL_USER,
+      to: email, // user email from form
+      subject: `We received your message - SafarSathi`,
+      text: `Hi ${name},\n\nWe received your message:\n\n${message}\n\nWe will contact you soon.\n\n- SafarSathi Team`,
+    });
+
+    res.json({ success: true, message: "Emails sent successfully!" });
 
   } catch (error) {
     console.error(error);
