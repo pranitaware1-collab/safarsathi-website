@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'motion/react';
 import { Compass, Users, Target, ShieldCheck, Mail, Phone, MapPin, Send, CheckCircle2 } from 'lucide-react';
 import { cn } from '@/src/lib/utils';
+const API = import.meta.env.VITE_API_URL;
 
 export const AboutPage = () => {
   return (
