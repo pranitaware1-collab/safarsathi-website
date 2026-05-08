@@ -145,38 +145,38 @@ export const ContactPage = () => {
   const [error, setError] = React.useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setError(null);
+  e.preventDefault();
+  setIsLoading(true);
+  setError(null);
 
-    try {
-  const API = import.meta.env.VITE_API_URL;
+  try {
+    const API = import.meta.env.VITE_API_URL;
 
-  const response = await fetch(`${API}/api/contact`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(formState),
-  });
+    const response = await fetch(`${API}/api/contact`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(formState),
+    });
 
-  const data = await response.json();
+    const data = await response.json();
 
-  if (!response.ok) {
-    throw new Error(data.details || data.error || 'Failed to send message');
+    if (!response.ok) {
+      throw new Error(data?.details || data?.error || "Failed to send message");
+    }
+
+    setIsSent(true);
+    setFormState({ name: "", email: "", message: "" });
+
+    setTimeout(() => setIsSent(false), 5000);
+  } catch (err: any) {
+    console.error("Contact form error:", err);
+    setError(err.message || "Something went wrong");
+  } finally {
+    setIsLoading(false);
   }
-
-  setIsSent(true);
-  setFormState({ name: '', email: '', message: '' });
-  setTimeout(() => setIsSent(false), 5000);
-
-} catch (err: any) {
-  console.error('Contact form error:', err);
-  setError(err.message);
-} finally {
-  setIsLoading(false);
-}
-  };
+};
 
   return (
     <div className="pt-24 min-h-screen bg-white">
