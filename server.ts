@@ -14,12 +14,14 @@ async function startServer() {
 
   app.use(express.json());
 
-  // HEALTH CHECK (ADD THIS)
+  // ✅ Health check (Render requirement)
   app.get("/healthz", (req, res) => {
     res.send("OK");
   });
 
-  // API routes
+  // -------------------------
+  // PLAN TRIP API
+  // -------------------------
   app.post("/api/plan-trip", async (req, res) => {
     const { clientName, clientEmail, clientPhone, destinationName } = req.body;
 
@@ -28,6 +30,7 @@ async function startServer() {
     }
 
     try {
+      // Email setup
       const transporter = nodemailer.createTransport({
         service: "gmail",
         auth: {
@@ -36,27 +39,52 @@ async function startServer() {
         },
       });
 
+      // Twilio setup
       const twilioClient = twilio(
-        process.env.TWILIO_ACCOUNT_SID!,
-        process.env.TWILIO_AUTH_TOKEN!
+        process.env.TWILIO_ACCOUNT_SID as string,
+        process.env.TWILIO_AUTH_TOKEN as string
       );
 
       const twilioPhone = process.env.TWILIO_PHONE_NUMBER || "";
       const ownerPhone = process.env.OWNER_PHONE || "";
 
+      // Send SMS to client
       await twilioClient.messages.create({
-        body: `Hello ${clientName}! Booking received for ${destinationName}`,
+        body: `Hi ${clientName}, your trip to ${destinationName} is received.`,
         from: twilioPhone,
         to: clientPhone,
       });
 
-      res.json({ success: true });
-    } catch (error: any) {
+      res.json({ success: true, message: "Trip request sent!" });
+    } catch (error) {
       console.error(error);
       res.status(500).json({ error: "Server error" });
     }
   });
 
+  // -------------------------
+  // PRODUCTION / DEV MODE
+  // -------------------------
+  if (process.env.NODE_ENV !== "production") {
+    const vite = await createViteServer({
+      server: { middlewareMode: true },
+      appType: "spa",
+    });
+
+    app.use(vite.middlewares);
+  } else {
+    const distPath = path.join(process.cwd(), "dist");
+
+    app.use(express.static(distPath));
+
+    app.get("*", (req, res) => {
+      res.sendFile(path.join(distPath, "index.html"));
+    });
+  }
+
+  // -------------------------
+  // START SERVER
+  // -------------------------
   app.listen(PORT, "0.0.0.0", () => {
     console.log(`Server running on port ${PORT}`);
   });
