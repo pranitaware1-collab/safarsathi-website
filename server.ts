@@ -65,7 +65,7 @@ const PORT = process.env.PORT || 3000;
         process.env.TWILIO_AUTH_TOKEN
       );
 
-      const twilioPhone = process.env.TWILIO_PHONE_NUMBER;
+     const twilioPhone = process.env.TWILIO_PHONE_NUMBER || "";
       const ownerPhone = process.env.OWNER_PHONE || "7972519926";
 
       // SMS to Client
