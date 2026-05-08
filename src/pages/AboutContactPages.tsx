@@ -150,29 +150,32 @@ export const ContactPage = () => {
     setError(null);
 
     try {
-      const response = await fetch('/api/contact', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formState),
-      });
+  const API = import.meta.env.VITE_API_URL;
 
-      const data = await response.json();
+  const response = await fetch(`${API}/api/contact`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(formState),
+  });
 
-      if (!response.ok) {
-        throw new Error(data.details || data.error || 'Failed to send message');
-      }
+  const data = await response.json();
 
-      setIsSent(true);
-      setFormState({ name: '', email: '', message: '' });
-      setTimeout(() => setIsSent(false), 5000);
-    } catch (err: any) {
-      console.error('Contact form error:', err);
-      setError(err.message);
-    } finally {
-      setIsLoading(false);
-    }
+  if (!response.ok) {
+    throw new Error(data.details || data.error || 'Failed to send message');
+  }
+
+  setIsSent(true);
+  setFormState({ name: '', email: '', message: '' });
+  setTimeout(() => setIsSent(false), 5000);
+
+} catch (err: any) {
+  console.error('Contact form error:', err);
+  setError(err.message);
+} finally {
+  setIsLoading(false);
+}
   };
 
   return (
