@@ -1,7 +1,5 @@
 import dotenv from 'dotenv'
-dotenv.config()git add .
-git commit -m "deploy backend"
-git push origin main
+dotenv.config()
 import express from "express";
 import { createServer as createViteServer } from "vite";
 import path from "path";
