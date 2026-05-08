@@ -1,0 +1,5 @@
+{
+  "name": "SafarSathi Tourism",
+  "description": "A smart travel companion for exploring destinations, planning trips, and getting AI-based recommendations.",
+  "requestFramePermissions": ["geolocation"]
+}
