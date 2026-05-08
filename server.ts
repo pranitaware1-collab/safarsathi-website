@@ -7,6 +7,14 @@ import path from "path";
 import nodemailer from "nodemailer";
 import twilio from "twilio";
 
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
+  },
+});
+
 const app = express();
 const PORT: number = process.env.PORT ? Number(process.env.PORT) : 3000;
 // ✅ MUST be at top
@@ -33,7 +41,16 @@ app.post("/api/contact", async (req, res) => {
   try {
     console.log("Contact received:", req.body);
 
-    res.json({ success: true, message: "Message received!" });
+    // send email
+    await transporter.sendMail({
+      from: process.env.EMAIL_USER,
+      to: process.env.EMAIL_USER, // YOUR OWNER EMAIL
+      subject: `New Contact Message from ${name}`,
+      text: `Name: ${name}\nEmail: ${email}\nMessage: ${message}`,
+    });
+
+    res.json({ success: true, message: "Message sent to email!" });
+
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Server error" });
