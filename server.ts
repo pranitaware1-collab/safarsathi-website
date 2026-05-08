@@ -44,7 +44,7 @@ app.post("/api/contact", async (req, res) => {
     // EMAIL TO OWNER
     await transporter.sendMail({
       from: process.env.EMAIL_USER,
-      to: process.env.EMAIL_USER, // owner email
+      to: process.env.OWNER_EMAIL, // owner email
       subject: `New Contact Message from ${name}`,
       text: `Name: ${name}\nEmail: ${email}\nMessage: ${message}`,
     });
@@ -52,7 +52,7 @@ app.post("/api/contact", async (req, res) => {
     // EMAIL TO USER
     await transporter.sendMail({
       from: process.env.EMAIL_USER,
-      to: email, // user email from form
+      to: EMAIL_USER, // user email from form
       subject: `We received your message - SafarSathi`,
       text: `Hi ${name},\n\nWe received your message:\n\n${message}\n\nWe will contact you soon.\n\n- SafarSathi Team`,
     });
