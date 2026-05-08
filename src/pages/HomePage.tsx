@@ -8,6 +8,7 @@ import { cn } from '@/src/lib/utils';
 import { useAuth } from '../context/AuthContext';
 import { FeedbackSection } from '../components/FeedbackSection';
 
+
 const CategoryIcon = ({ category }: { category: string }) => {
   switch (category) {
     case 'Beaches': return <Waves className="w-6 h-6" />;
