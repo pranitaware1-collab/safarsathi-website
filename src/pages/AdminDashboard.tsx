@@ -118,9 +118,9 @@ export const AdminDashboard = () => {
   );
 
   return (
-    <div className="min-h-screen bg-gray-50 flex">
+<div className="min-h-screen bg-gray-50 flex flex-col lg:flex-row">
       {/* Sidebar */}
-      <div className="w-72 bg-white border-r border-gray-100 flex flex-col">
+<div className="w-full lg:w-72 bg-white border-r border-gray-100 flex flex-col">
         <div className="p-8 border-b border-gray-100">
           <div className="flex items-center space-x-3 mb-4 group">
             <div className="flex flex-col">
@@ -158,9 +158,9 @@ export const AdminDashboard = () => {
       </div>
 
       {/* Main Content */}
-      <div className="flex-grow p-12 overflow-y-auto">
+    <div className="flex-grow p-4 sm:p-6 lg:p-12 overflow-y-auto">
         <div className="max-w-6xl mx-auto">
-          <div className="flex justify-between items-center mb-12">
+      <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-4 mb-12">
             <div>
               <h1 className="text-4xl font-black text-gray-900 mb-2 uppercase tracking-tighter">Manage Trips</h1>
               <p className="text-indigo-600 font-bold italic tracking-wide text-sm">"पैसे बँक मे नही यादो मे जमा करो"</p>
@@ -400,7 +400,7 @@ export const AdminDashboard = () => {
                     </div>
 
                     <div className="space-y-4">
-                      <div className="flex items-center justify-between">
+                     <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
                         <label className="text-xs font-bold text-gray-400 uppercase tracking-wider ml-1 flex items-center">
                           <Utensils className="w-3 h-3 mr-1" /> Nearby Eats (Restaurants)
                         </label>
@@ -446,7 +446,7 @@ export const AdminDashboard = () => {
 
                   {/* Itinerary Management (Reuse the same logic) */}
                   <div className="space-y-4 pt-4 border-t border-gray-100">
-                    <div className="flex items-center justify-between">
+                 <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
                       <label className="text-xs font-bold text-gray-400 uppercase tracking-wider ml-1">Trip Schedule (Itinerary)</label>
                       <button 
                         onClick={() => {
@@ -663,7 +663,7 @@ export const AdminDashboard = () => {
                       <textarea 
                         value={editForm.longDescription}
                         onChange={(e) => setEditForm({...editForm, longDescription: e.target.value})}
-                        className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-100 focus:ring-2 focus:ring-indigo-500 outline-none h-32"
+                      className="w-full min-h-[140px] px-4 py-3 rounded-xl bg-gray-50 border border-gray-100 focus:ring-2 focus:ring-indigo-500 outline-none resize-y"
                       />
                     </div>
 
