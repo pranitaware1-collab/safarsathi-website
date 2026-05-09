@@ -1,16 +1,42 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { 
   Plus, Edit2, Trash2, LayoutDashboard, 
   LogOut, Image as ImageIcon, IndianRupee, 
   MapPin, Star, Save, X, Search, FileText,
-  Hotel, Utensils
+  Hotel, Utensils, Bell
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useAuth } from '../context/AuthContext';
 import { useDestinations } from '../context/DestinationContext';
 import { Destination } from '../types';
 import { cn } from '../lib/utils';
+
+
+import { getNotice, updateNotice } from '../services/settingsService';
+
+const [activeTab, setActiveTab] = useState<'destinations' | 'notice'>('destinations');
+const [noticeContent, setNoticeContent] = useState('');
+const [isSavingNotice, setIsSavingNotice] = useState(false);
+
+// Fetch notice when tab opens
+useEffect(() => {
+  if (activeTab === 'notice') {
+    getNotice().then(setNoticeContent);
+  }
+}, [activeTab]);
+
+const handleSaveNotice = async () => {
+  setIsSavingNotice(true);
+  try {
+    await updateNotice(noticeContent);
+    alert('Notice Board updated!');
+  } catch (err) {
+    alert('Failed to update.');
+  } finally {
+    setIsSavingNotice(false);
+  }
+};
 
 export const AdminDashboard = () => {
   const { isAdmin, logout, clearAdmin } = useAuth();
@@ -134,12 +160,33 @@ export const AdminDashboard = () => {
           </div>
         </div>
         
-        <div className="flex-grow p-6 space-y-2">
-          <button className="w-full flex items-center space-x-3 px-4 py-3 bg-indigo-50 text-indigo-600 rounded-xl font-bold transition-all">
-            <LayoutDashboard className="w-5 h-5" />
-            <span>Destinations</span>
-          </button>
-        </div>
+       <div className="flex-grow p-6 space-y-2">
+  <button 
+    onClick={() => setActiveTab('destinations')}
+    className={cn(
+      "w-full flex items-center space-x-3 px-4 py-3 rounded-xl font-bold",
+      activeTab === 'destinations'
+        ? "bg-indigo-50 text-indigo-600"
+        : "text-gray-500"
+    )}
+  >
+    <LayoutDashboard className="w-5 h-5" />
+    <span>Destinations</span>
+  </button>
+
+  <button 
+    onClick={() => setActiveTab('notice')}
+    className={cn(
+      "w-full flex items-center space-x-3 px-4 py-3 rounded-xl font-bold",
+      activeTab === 'notice'
+        ? "bg-indigo-50 text-indigo-600"
+        : "text-gray-500"
+    )}
+  >
+    <Bell className="w-5 h-5" />
+    <span>Notice Board</span>
+  </button>
+</div>
 
         <div className="p-6 border-t border-gray-100">
           <button 

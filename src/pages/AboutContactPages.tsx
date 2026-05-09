@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { getNotice } from '../services/settingsService';
 import { motion } from 'motion/react';
 import { Compass, Users, Target, ShieldCheck, Mail, Phone, MapPin, Send, CheckCircle2 } from 'lucide-react';
 import { cn } from '@/src/lib/utils';
@@ -119,6 +120,7 @@ export const AboutPage = () => {
                 Leading the vision of SafarSathi to provide unforgettable travel experiences across India.
               </p>
             </motion.div>
+
             <motion.div 
               whileHover={{ y: -10 }}
               className="bg-white p-10 rounded-[3rem] border border-gray-100 shadow-sm hover:shadow-2xl transition-all text-center group"
@@ -140,152 +142,32 @@ export const AboutPage = () => {
 };
 
 export const ContactPage = () => {
-  const [formState, setFormState] = React.useState({ name: '', email: '', message: '' });
-  const [isSent, setIsSent] = React.useState(false);
-  const [isLoading, setIsLoading] = React.useState(false);
-  const [error, setError] = React.useState<string | null>(null);
+  const [notice, setNotice] = useState<string>('');
+  const [isLoading, setIsLoading] = useState(true);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  setIsLoading(true);
-  setError(null);
-
-  try {
-    const API = import.meta.env.VITE_API_URL;
-
-    const response = await fetch(`${API}/api/contact`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(formState),
+  useEffect(() => {
+    getNotice().then(content => {
+      setNotice(content);
+      setIsLoading(false);
     });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      throw new Error(data?.details || data?.error || "Failed to send message");
-    }
-
-    setIsSent(true);
-    setFormState({ name: "", email: "", message: "" });
-
-    setTimeout(() => setIsSent(false), 5000);
-  } catch (err: any) {
-    console.error("Contact form error:", err);
-    setError(err.message || "Something went wrong");
-  } finally {
-    setIsLoading(false);
-  }
-};
+  }, []);
 
   return (
     <div className="pt-24 min-h-screen bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-24">
-          <div>
-            <h1 className="text-5xl font-bold text-gray-900 mb-8 tracking-tight">Get in Touch</h1>
-            <p className="text-xl text-gray-600 mb-12 leading-relaxed">
-              Have questions about a destination or need help planning your trip? Our team is here to help you 24/7.
-            </p>
+        <div className="bg-indigo-600 p-1 rounded-[3rem] shadow-2xl overflow-hidden">
+          <div className="bg-white p-10 rounded-[2.8rem]">
+            <h2 className="text-3xl font-black mb-6 uppercase italic">
+              SafarSathi Notice Board
+            </h2>
 
-            <div className="space-y-10">
-              <div className="flex items-center space-x-6">
-                <div className="w-14 h-14 bg-indigo-50 rounded-2xl flex items-center justify-center text-indigo-600 flex-shrink-0">
-                  <Mail className="w-6 h-6" />
-                </div>
-                <div>
-                  <h4 className="font-bold text-gray-900 mb-1">Email Us</h4>
-                  <p className="text-gray-600">suyogaware2@gmail.com</p>
-                </div>
-              </div>
-              <div className="flex items-center space-x-6">
-                <div className="w-14 h-14 bg-indigo-50 rounded-2xl flex items-center justify-center text-indigo-600 flex-shrink-0">
-                  <Phone className="w-6 h-6" />
-                </div>
-                <div>
-                  <h4 className="font-bold text-gray-900 mb-1">Call Us</h4>
-                  <p className="text-gray-600">+91 7972519926</p>
-                </div>
-              </div>
-              <div className="flex items-center space-x-6">
-                <div className="w-14 h-14 bg-indigo-50 rounded-2xl flex items-center justify-center text-indigo-600 flex-shrink-0">
-                  <MapPin className="w-6 h-6" />
-                </div>
-                <div>
-                  <h4 className="font-bold text-gray-900 mb-1">Our Base</h4>
-                  <p className="text-gray-600">Maharashtra, India</p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-gray-50 p-12 rounded-[3rem] border border-gray-100 shadow-sm relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/5 rounded-full blur-[80px] -mr-32 -mt-32" />
-            
-            <form onSubmit={handleSubmit} className="space-y-8 relative z-10">
-              {error && (
-                <div className="p-4 bg-red-50 border border-red-100 text-red-600 rounded-2xl text-sm">
-                  {error}
-                </div>
+            <div className="text-gray-700 text-lg whitespace-pre-line">
+              {isLoading ? (
+                <p>Loading updates...</p>
+              ) : (
+                notice || "Stay tuned for updates!"
               )}
-              <div className="space-y-2">
-                <label className="text-sm font-bold text-gray-900 uppercase tracking-wider">Full Name</label>
-                <input 
-                  type="text" 
-                  required
-                  value={formState.name}
-                  onChange={(e) => setFormState({ ...formState, name: e.target.value })}
-                  placeholder="John Doe"
-                  className="w-full px-6 py-4 rounded-2xl bg-white border border-gray-200 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-bold text-gray-900 uppercase tracking-wider">Email Address</label>
-                <input 
-                  type="email" 
-                  required
-                  value={formState.email}
-                  onChange={(e) => setFormState({ ...formState, email: e.target.value })}
-                  placeholder="john@example.com"
-                  className="w-full px-6 py-4 rounded-2xl bg-white border border-gray-200 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-bold text-gray-900 uppercase tracking-wider">Your Message</label>
-                <textarea 
-                  rows={5}
-                  required
-                  value={formState.message}
-                  onChange={(e) => setFormState({ ...formState, message: e.target.value })}
-                  placeholder="How can we help you?"
-                  className="w-full px-6 py-4 rounded-2xl bg-white border border-gray-200 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all resize-none"
-                />
-              </div>
-              <button 
-                type="submit"
-                disabled={isSent || isLoading}
-                className={cn(
-                  "w-full py-5 rounded-2xl font-bold flex items-center justify-center space-x-3 transition-all shadow-xl",
-                  isSent ? "bg-green-500 text-white shadow-green-100" : "bg-indigo-600 text-white hover:bg-indigo-700 shadow-indigo-100",
-                  isLoading && "opacity-70 cursor-not-allowed"
-                )}
-              >
-                {isLoading ? (
-                  <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                ) : isSent ? (
-                  <>
-                    <CheckCircle2 className="w-6 h-6" />
-                    <span>Message Sent!</span>
-                  </>
-                ) : (
-                  <>
-                    <Send className="w-5 h-5" />
-                    <span>Send Message</span>
-                  </>
-                )}
-              </button>
-            </form>
+            </div>
           </div>
         </div>
       </div>

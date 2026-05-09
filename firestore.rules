@@ -40,5 +40,13 @@ service cloud.firestore {
     match /{document=**} {
       allow read, write: if false;
     }
+   
+   // Add this inside the match /databases/{database}/documents block
+  match /settings/notice {
+  allow read: if true;
+  allow write: if isAdmin(); // Assuming you have an isAdmin() helper
+}
+
   }
+  
 }
