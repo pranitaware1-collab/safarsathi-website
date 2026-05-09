@@ -2,11 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import {
   Plus, Edit2, Trash2, LayoutDashboard,
-  LogOut, Image as ImageIcon, IndianRupee,
-  MapPin, Save, X, Search, Bell,
-  FileText, Hotel, Utensils
+  LogOut, Bell
 } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion } from 'motion/react';
 
 import { useAuth } from '../context/AuthContext';
 import { useDestinations } from '../context/DestinationContext';
@@ -14,7 +12,6 @@ import { Destination } from '../types';
 import { cn } from '../lib/utils';
 
 import { getNotice, updateNotice } from '../services/settingsService';
-
 
 /* ---------------- DRIVE HELPERS ---------------- */
 const convertDriveImage = (url: string) => {
@@ -29,17 +26,17 @@ const convertDrivePdf = (url: string) => {
   return match ? `https://drive.google.com/uc?export=download&id=${match[1]}` : url;
 };
 
-/* ---------------- MAIN COMPONENT ---------------- */
+/* ---------------- MAIN ---------------- */
 export const AdminDashboard = () => {
   const { isAdmin, logout } = useAuth();
   const { destinations, addDestination, updateDestination, deleteDestination } = useDestinations();
+
   const navigate = useNavigate();
   const location = useLocation();
 
   const isAuthorized = isAdmin || location.state?.authorized;
 
   const [activeTab, setActiveTab] = useState<'destinations' | 'notice'>('destinations');
-
   const [isEditing, setIsEditing] = useState<string | null>(null);
   const [isAdding, setIsAdding] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(null);
@@ -47,18 +44,15 @@ export const AdminDashboard = () => {
   const [search, setSearch] = useState('');
   const [editForm, setEditForm] = useState<Partial<Destination>>({});
 
-  /* Notice */
   const [notice, setNotice] = useState('');
   const [savingNotice, setSavingNotice] = useState(false);
 
-  /* ---------------- AUTH ---------------- */
   useEffect(() => {
     if (!isAuthorized) navigate('/admin/login', { replace: true });
   }, [isAuthorized]);
 
   if (!isAuthorized) return null;
 
-  /* ---------------- NOTICE ---------------- */
   useEffect(() => {
     if (activeTab === 'notice') {
       getNotice().then(setNotice);
@@ -72,8 +66,7 @@ export const AdminDashboard = () => {
     alert('Notice Updated');
   };
 
-  /* ---------------- DESTINATION ---------------- */
-
+  /* ---------------- ADD ---------------- */
   const handleAdd = () => {
     setIsAdding(true);
     setEditForm({
@@ -90,16 +83,20 @@ export const AdminDashboard = () => {
       nearbyHotels: [],
       nearbyRestaurants: [],
       itineraryPdfUrl: '',
+      itineraryPdfUrl2: '',   // ✅ NEW
       tripPlanUrl: '',
-      bookingFormUrl: ''
+      bookingFormUrl: '',
+      googleSheetUrl: ''       // ✅ NEW
     });
   };
 
+  /* ---------------- SAVE ---------------- */
   const handleSave = () => {
     let data = { ...editForm };
 
     data.image = convertDriveImage(data.image || '');
     data.itineraryPdfUrl = convertDrivePdf(data.itineraryPdfUrl || '');
+    data.itineraryPdfUrl2 = convertDrivePdf(data.itineraryPdfUrl2 || '');
     data.tripPlanUrl = convertDrivePdf(data.tripPlanUrl || '');
 
     if (isEditing) updateDestination(isEditing, data);
@@ -114,9 +111,8 @@ export const AdminDashboard = () => {
   );
 
   /* ---------------- UI ---------------- */
-
   return (
-    <div className="min-h-screen flex bg-gray-50">
+    <div className="min-h-screen flex bg-gray-100">
 
       {/* SIDEBAR */}
       <div className="w-72 bg-white border-r flex flex-col">
@@ -125,41 +121,37 @@ export const AdminDashboard = () => {
           <p className="text-indigo-600 text-xs">SafarSathi</p>
         </div>
 
-        <div className="p-4 space-y-2">
-          <button onClick={() => setActiveTab('destinations')}
-            className={cn("w-full p-3 rounded-xl flex gap-2",
-              activeTab === 'destinations' ? "bg-indigo-50 text-indigo-600" : "")}>
-            <LayoutDashboard /> Trips
-          </button>
+        <button onClick={() => setActiveTab('destinations')}
+          className={cn("p-3 m-2 rounded-xl border",
+            activeTab === 'destinations' && "bg-indigo-50 text-indigo-600")}>
+          Trips
+        </button>
 
-          <button onClick={() => setActiveTab('notice')}
-            className={cn("w-full p-3 rounded-xl flex gap-2",
-              activeTab === 'notice' ? "bg-indigo-50 text-indigo-600" : "")}>
-            <Bell /> Notice
-          </button>
-        </div>
+        <button onClick={() => setActiveTab('notice')}
+          className={cn("p-3 m-2 rounded-xl border",
+            activeTab === 'notice' && "bg-indigo-50 text-indigo-600")}>
+          Notice
+        </button>
 
-        <button onClick={logout} className="p-4 text-red-500 flex gap-2">
-          <LogOut /> Logout
+        <button onClick={logout} className="mt-auto p-4 text-red-500 border-t">
+          Logout
         </button>
       </div>
 
       {/* MAIN */}
       <div className="flex-1 p-6">
 
-        {/* ---------------- DESTINATIONS ---------------- */}
         {activeTab === 'destinations' && (
           <>
-            <div className="flex justify-between mb-6">
-              <h1 className="text-3xl font-black">Trips</h1>
-              <button onClick={handleAdd}
-                className="bg-indigo-600 text-white px-5 py-2 rounded-xl flex gap-2">
-                <Plus /> Add Trip
+            <div className="flex justify-between mb-4">
+              <h1 className="text-2xl font-bold">Trips</h1>
+              <button onClick={handleAdd} className="bg-indigo-600 text-white px-4 py-2 rounded-xl">
+                + Add Trip
               </button>
             </div>
 
             <input
-              className="p-3 w-full border rounded-xl mb-4"
+              className="border p-3 w-full rounded-xl mb-4"
               placeholder="Search..."
               value={search}
               onChange={e => setSearch(e.target.value)}
@@ -167,17 +159,18 @@ export const AdminDashboard = () => {
 
             {/* LIST */}
             {filtered.map(dest => (
-              <div key={dest.id} className="bg-white p-4 rounded-xl flex justify-between mb-3">
+              <div key={dest.id} className="bg-white border rounded-xl p-4 mb-3 flex justify-between">
 
-                <div className="flex gap-4">
-                  <img
-                    src={dest.image}
-                    className="w-20 h-20 rounded-xl object-cover"
-                  />
-                  <div>
-                    <h2 className="font-bold">{dest.name}</h2>
-                    <p className="text-indigo-600">{dest.budgetEstimate}</p>
-                  </div>
+                <div>
+                  <h2 className="font-bold">{dest.name}</h2>
+                  <p className="text-sm text-gray-500">{dest.budgetEstimate}</p>
+
+                  {/* NEW LINKS DISPLAY */}
+                  {dest.googleSheetUrl && (
+                    <a href={dest.googleSheetUrl} target="_blank" className="text-blue-600 text-sm">
+                      Google Sheet Booking
+                    </a>
+                  )}
                 </div>
 
                 <div className="flex gap-2">
@@ -191,67 +184,51 @@ export const AdminDashboard = () => {
               </div>
             ))}
 
-            {/* FULL EDIT FORM */}
+            {/* EDIT FORM */}
             {(isAdding || isEditing) && (
-              <motion.div className="bg-white p-6 rounded-xl mt-6 space-y-4">
+              <motion.div className="bg-white border p-5 rounded-xl mt-6 space-y-3">
 
                 <input placeholder="Name"
+                  className="border p-2 w-full"
                   value={editForm.name || ''}
-                  onChange={e => setEditForm({ ...editForm, name: e.target.value })} />
-
-                <input placeholder="Image (Google Drive)"
-                  value={editForm.image || ''}
-                  onChange={e => setEditForm({ ...editForm, image: e.target.value })} />
-
-                <textarea placeholder="Description"
-                  value={editForm.description || ''}
-                  onChange={e => setEditForm({ ...editForm, description: e.target.value })} />
-
-                {/* ITINERARY */}
-                <div>
-                  <h3 className="font-bold">Itinerary</h3>
-
-                  {(editForm.itinerary || []).map((day, i) => (
-                    <div key={i} className="border p-2 rounded mb-2">
-                      <input
-                        value={day.activities.join(',')}
-                        onChange={e => {
-                          const arr = [...(editForm.itinerary || [])];
-                          arr[i].activities = e.target.value.split(',');
-                          setEditForm({ ...editForm, itinerary: arr });
-                        }}
-                      />
-                    </div>
-                  ))}
-
-                  <button onClick={() => {
-                    const arr = [...(editForm.itinerary || [])];
-                    arr.push({ day: arr.length + 1, activities: [] });
-                    setEditForm({ ...editForm, itinerary: arr });
-                  }}>
-                    + Add Day
-                  </button>
-                </div>
-
-                {/* HOTELS */}
-                <input placeholder="Hotels (comma)"
-                  value={editForm.nearbyHotels?.join(',') || ''}
-                  onChange={e =>
-                    setEditForm({ ...editForm, nearbyHotels: e.target.value.split(',') })
-                  }
+                  onChange={e => setEditForm({ ...editForm, name: e.target.value })}
                 />
 
-                {/* RESTAURANTS */}
-                <input placeholder="Restaurants (comma)"
-                  value={editForm.nearbyRestaurants?.join(',') || ''}
-                  onChange={e =>
-                    setEditForm({ ...editForm, nearbyRestaurants: e.target.value.split(',') })
-                  }
+                <input placeholder="Image (Google Drive)"
+                  className="border p-2 w-full"
+                  value={editForm.image || ''}
+                  onChange={e => setEditForm({ ...editForm, image: e.target.value })}
+                />
+
+                <textarea placeholder="Description"
+                  className="border p-2 w-full"
+                  value={editForm.description || ''}
+                  onChange={e => setEditForm({ ...editForm, description: e.target.value })}
+                />
+
+                {/* ITINERARY LINKS */}
+                <input placeholder="Itinerary PDF 1"
+                  className="border p-2 w-full"
+                  value={editForm.itineraryPdfUrl || ''}
+                  onChange={e => setEditForm({ ...editForm, itineraryPdfUrl: e.target.value })}
+                />
+
+                <input placeholder="Itinerary PDF 2"
+                  className="border p-2 w-full"
+                  value={editForm.itineraryPdfUrl2 || ''}
+                  onChange={e => setEditForm({ ...editForm, itineraryPdfUrl2: e.target.value })}
+                />
+
+                {/* GOOGLE SHEET */}
+                <input placeholder="Google Sheet Booking Link"
+                  className="border p-2 w-full"
+                  value={editForm.googleSheetUrl || ''}
+                  onChange={e => setEditForm({ ...editForm, googleSheetUrl: e.target.value })}
                 />
 
                 <button onClick={handleSave}
-                  className="bg-indigo-600 text-white px-5 py-2 rounded-xl">
-                  Save
+                  className="bg-indigo-600 text-white px-5 py-2 rounded-xl w-full">
+                  Save Trip
                 </button>
 
               </motion.div>
@@ -259,19 +236,17 @@ export const AdminDashboard = () => {
           </>
         )}
 
-        {/* ---------------- NOTICE ---------------- */}
+        {/* NOTICE */}
         {activeTab === 'notice' && (
-          <div>
+          <div className="bg-white p-4 rounded-xl border">
             <textarea
-              className="w-full p-4 border rounded-xl"
+              className="w-full border p-3 rounded-xl"
               value={notice}
               onChange={e => setNotice(e.target.value)}
             />
-
             <button
               onClick={handleSaveNotice}
               className="mt-3 bg-indigo-600 text-white px-5 py-2 rounded-xl"
-              disabled={savingNotice}
             >
               Save Notice
             </button>

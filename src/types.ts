@@ -1,6 +1,8 @@
 export interface ItineraryDay {
   day: number;
   activities: string[];
+  itineraryPdfUrl2?: string;
+  googleSheetUrl?: string;
 }
 
 export interface Destination {
@@ -19,6 +21,8 @@ export interface Destination {
   itineraryPdfUrl?: string;
   tripPlanUrl?: string;
   bookingFormUrl?: string;
+  itineraryPdfUrl2?: string;
+googleSheetUrl?: string;
 }
 
 export interface WeatherInfo {
