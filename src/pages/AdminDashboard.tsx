@@ -1,9 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import {
-  Plus, Edit2, Trash2, LayoutDashboard,
-  LogOut, Bell
-} from 'lucide-react';
+import { Plus, Edit2, Trash2, LayoutDashboard, LogOut, Bell } from 'lucide-react';
 import { motion } from 'motion/react';
 
 import { useAuth } from '../context/AuthContext';
@@ -29,7 +26,7 @@ const convertDrivePdf = (url: string) => {
 /* ---------------- MAIN ---------------- */
 export const AdminDashboard = () => {
   const { isAdmin, logout } = useAuth();
-  const { destinations, addDestination, updateDestination, deleteDestination } = useDestinations();
+  const { destinations, addDestination, updateDestination } = useDestinations();
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -39,20 +36,20 @@ export const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState<'destinations' | 'notice'>('destinations');
   const [isEditing, setIsEditing] = useState<string | null>(null);
   const [isAdding, setIsAdding] = useState(false);
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(null);
 
   const [search, setSearch] = useState('');
   const [editForm, setEditForm] = useState<Partial<Destination>>({});
 
   const [notice, setNotice] = useState('');
-  const [savingNotice, setSavingNotice] = useState(false);
 
+  /* AUTH */
   useEffect(() => {
     if (!isAuthorized) navigate('/admin/login', { replace: true });
   }, [isAuthorized]);
 
   if (!isAuthorized) return null;
 
+  /* NOTICE */
   useEffect(() => {
     if (activeTab === 'notice') {
       getNotice().then(setNotice);
@@ -60,13 +57,11 @@ export const AdminDashboard = () => {
   }, [activeTab]);
 
   const handleSaveNotice = async () => {
-    setSavingNotice(true);
     await updateNotice(notice);
-    setSavingNotice(false);
     alert('Notice Updated');
   };
 
-  /* ---------------- ADD ---------------- */
+  /* ADD */
   const handleAdd = () => {
     setIsAdding(true);
     setEditForm({
@@ -77,41 +72,48 @@ export const AdminDashboard = () => {
       description: '',
       longDescription: '',
       budgetEstimate: '',
-      bestTimeToVisit: '',
       price: '',
+      bestTimeToVisit: '',
       coordinates: { lat: 0, lng: 0 },
       itinerary: [],
       nearbyHotels: [],
       nearbyRestaurants: [],
       itineraryPdfUrl: '',
-      itineraryPdfUrl2: '',   // ✅ NEW
       tripPlanUrl: '',
       bookingFormUrl: '',
-      googleSheetUrl: ''       // ✅ NEW
+      googleSheetUrl: ''
     });
   };
 
-  /* ---------------- SAVE ---------------- */
+  /* SAVE */
   const handleSave = () => {
-    let data = { ...editForm };
+  let data: Destination = { ...editForm } as Destination;
 
-    data.image = convertDriveImage(data.image || '');
-    data.itineraryPdfUrl = convertDrivePdf(data.itineraryPdfUrl || '');
-    data.itineraryPdfUrl2 = convertDrivePdf(data.itineraryPdfUrl2 || '');
-    data.tripPlanUrl = convertDrivePdf(data.tripPlanUrl || '');
+  // ensure ID exists
+  if (!data.id) {
+    data.id = Math.random().toString(36).slice(2);
+  }
 
-    if (isEditing) updateDestination(isEditing, data);
-    else addDestination(data as Destination);
+  // Google Drive conversion (IMPORTANT FIX retained)
+  data.image = convertDriveImage(data.image || '');
+  data.itineraryPdfUrl = convertDrivePdf(data.itineraryPdfUrl || '');
+  data.tripPlanUrl = convertDrivePdf(data.tripPlanUrl || '');
 
-    setIsEditing(null);
-    setIsAdding(false);
-  };
+  // SAVE LOGIC
+  if (isEditing) {
+    updateDestination(isEditing, data);
+  } else {
+    addDestination(data);
+  }
+
+  setIsEditing(null);
+  setIsAdding(false);
+};
 
   const filtered = destinations.filter(d =>
     d.name.toLowerCase().includes(search.toLowerCase())
   );
 
-  /* ---------------- UI ---------------- */
   return (
     <div className="min-h-screen flex bg-gray-100">
 
@@ -123,13 +125,13 @@ export const AdminDashboard = () => {
         </div>
 
         <button onClick={() => setActiveTab('destinations')}
-          className={cn("p-3 m-2 rounded-xl border",
+          className={cn("p-3 m-2 rounded-xl",
             activeTab === 'destinations' && "bg-indigo-50 text-indigo-600")}>
           Trips
         </button>
 
         <button onClick={() => setActiveTab('notice')}
-          className={cn("p-3 m-2 rounded-xl border",
+          className={cn("p-3 m-2 rounded-xl",
             activeTab === 'notice' && "bg-indigo-50 text-indigo-600")}>
           Notice
         </button>
@@ -142,6 +144,7 @@ export const AdminDashboard = () => {
       {/* MAIN */}
       <div className="flex-1 p-6">
 
+        {/* TRIPS */}
         {activeTab === 'destinations' && (
           <>
             <div className="flex justify-between mb-4">
@@ -164,15 +167,19 @@ export const AdminDashboard = () => {
 
                 <div>
                   <h2 className="font-bold">{dest.name}</h2>
-                  <p className="text-sm text-gray-500">{dest.budgetEstimate}</p>
-                  <p className="text-green-600 font-semibold">
-                   ₹{dest.price}
-                   </p>
 
-                  {/* NEW LINKS DISPLAY */}
+                  <p className="text-gray-500 text-sm">{dest.budgetEstimate}</p>
+
+                  {/* PRICE FIX */}
+                  <p className="text-green-600 font-bold">
+                    ₹{dest.price}
+                  </p>
+
+                  {/* GOOGLE SHEET */}
                   {dest.googleSheetUrl && (
-                    <a href={dest.googleSheetUrl} target="_blank" className="text-blue-600 text-sm">
-                      Google Sheet Booking
+                    <a href={dest.googleSheetUrl} target="_blank"
+                      className="text-blue-600 text-sm underline">
+                      Booking Sheet
                     </a>
                   )}
                 </div>
@@ -181,14 +188,14 @@ export const AdminDashboard = () => {
                   <button onClick={() => { setIsEditing(dest.id); setEditForm(dest); }}>
                     <Edit2 />
                   </button>
-                  <button onClick={() => setShowDeleteConfirm(dest.id)}>
+                  <button>
                     <Trash2 />
                   </button>
                 </div>
               </div>
             ))}
 
-            {/* EDIT FORM */}
+            {/* FORM */}
             {(isAdding || isEditing) && (
               <motion.div className="bg-white border p-5 rounded-xl mt-6 space-y-3">
 
@@ -198,44 +205,28 @@ export const AdminDashboard = () => {
                   onChange={e => setEditForm({ ...editForm, name: e.target.value })}
                 />
 
-                <input placeholder="Image (Google Drive)"
+                <input placeholder="Image (Drive)"
                   className="border p-2 w-full"
                   value={editForm.image || ''}
                   onChange={e => setEditForm({ ...editForm, image: e.target.value })}
                 />
 
-                <textarea placeholder="Description"
+                <input placeholder="Price"
                   className="border p-2 w-full"
-                  value={editForm.description || ''}
-                  onChange={e => setEditForm({ ...editForm, description: e.target.value })}
-                />
-                <input
-                 className="border p-2 rounded-xl w-full"
-                  placeholder="Price (e.g. ₹5000 per person)"
-                   value={editForm.price || ''}
-                    onChange={(e) =>
-                         setEditForm({ ...editForm, price: e.target.value })
-                      }
-                     />
-
-                {/* ITINERARY LINKS */}
-                <input placeholder="Itinerary PDF 1"
-                  className="border p-2 w-full"
-                  value={editForm.itineraryPdfUrl || ''}
-                  onChange={e => setEditForm({ ...editForm, itineraryPdfUrl: e.target.value })}
+                  value={editForm.price || ''}
+                  onChange={e => setEditForm({ ...editForm, price: e.target.value })}
                 />
 
-                <input placeholder="Itinerary PDF 2"
-                  className="border p-2 w-full"
-                  value={editForm.itineraryPdfUrl2 || ''}
-                  onChange={e => setEditForm({ ...editForm, itineraryPdfUrl2: e.target.value })}
-                />
-
-                {/* GOOGLE SHEET */}
-                <input placeholder="Google Sheet Booking Link"
+                <input placeholder="Google Sheet Link"
                   className="border p-2 w-full"
                   value={editForm.googleSheetUrl || ''}
                   onChange={e => setEditForm({ ...editForm, googleSheetUrl: e.target.value })}
+                />
+
+                <input placeholder="Itinerary PDF"
+                  className="border p-2 w-full"
+                  value={editForm.itineraryPdfUrl || ''}
+                  onChange={e => setEditForm({ ...editForm, itineraryPdfUrl: e.target.value })}
                 />
 
                 <button onClick={handleSave}

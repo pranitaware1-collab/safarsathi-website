@@ -313,7 +313,27 @@ export const DestinationDetailsPage = () => {
                   <p className="text-indigo-100 text-lg mb-8 max-w-2xl">
                     Our AI has analyzed thousands of travel experiences to give you the most unique tips for your visit to {destination.name}.
                   </p>
-                  
+                   <p className="text-green-600 font-bold text-lg">
+                ₹{destination.price || "Not Available"}
+                  </p>
+                  {destination.googleSheetUrl && (
+                   <a
+                  href={destination.googleSheetUrl}
+                    target="_blank"
+                  className="text-blue-600 font-semibold underline"
+                       >
+                   Book via Google Sheet
+              </a>
+                  )}
+                   {destination.itineraryPdfUrl && (
+                 <a
+                    href={destination.itineraryPdfUrl}
+               target="_blank"
+              className="text-indigo-600 font-bold underline"
+               >
+                Download Itinerary PDF
+                </a>
+               )}
                   {isLoadingAI ? (
                     <div className="flex flex-col items-center justify-center py-12 space-y-4">
                       <div className="w-12 h-12 border-4 border-indigo-400 border-t-white rounded-full animate-spin" />
@@ -467,7 +487,7 @@ export const DestinationDetailsPage = () => {
                 </button>
               </div>
 
-              <div className="mt-8 pt-6 border-t border-gray-100">
+              <div className="mt-8 pt-6 border-t borde  r-gray-100">
                 <p className="text-xs text-gray-400 text-center font-medium">
                   Share this trip with your friends and family to start planning together!
                 </p>

@@ -1,37 +1,39 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Destination } from '../types';
-import { DESTINATIONS as INITIAL_DESTINATIONS } from '../constants';
 
-interface DestinationContextType {
+interface ContextType {
   destinations: Destination[];
-  addDestination: (dest: Destination) => void;
-  updateDestination: (id: string, dest: Partial<Destination>) => void;
+  addDestination: (d: Destination) => void;
+  updateDestination: (id: string, d: Destination) => void;
   deleteDestination: (id: string) => void;
   getDestinationById: (id: string) => Destination | undefined;
 }
 
-const DestinationContext = createContext<DestinationContextType | undefined>(undefined);
+const DestinationContext = createContext<ContextType>({} as ContextType);
 
-export const DestinationProvider = ({ children }: { children: ReactNode }) => {
+export const DestinationProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [destinations, setDestinations] = useState<Destination[]>(() => {
-    const saved = localStorage.getItem('safarsathi_destinations');
-    return saved ? JSON.parse(saved) : INITIAL_DESTINATIONS;
+    const data = localStorage.getItem('destinations');
+    return data ? JSON.parse(data) : [];
   });
 
+  /* SAVE TO LOCAL STORAGE */
   useEffect(() => {
-    localStorage.setItem('safarsathi_destinations', JSON.stringify(destinations));
+    localStorage.setItem('destinations', JSON.stringify(destinations));
   }, [destinations]);
 
-  const addDestination = (dest: Destination) => {
-    setDestinations(prev => [...prev, dest]);
+  const addDestination = (d: Destination) => {
+    setDestinations(prev => [...prev, d]);
   };
 
-  const updateDestination = (id: string, updatedFields: Partial<Destination>) => {
-    setDestinations(prev => prev.map(d => d.id === id ? { ...d, ...updatedFields } as Destination : d));
+  const updateDestination = (id: string, updated: Destination) => {
+    setDestinations(prev =>
+      prev.map(item => (item.id === id ? updated : item))
+    );
   };
 
   const deleteDestination = (id: string) => {
-    setDestinations(prev => prev.filter(d => d.id !== id));
+    setDestinations(prev => prev.filter(item => item.id !== id));
   };
 
   const getDestinationById = (id: string) => {
@@ -39,10 +41,10 @@ export const DestinationProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <DestinationContext.Provider value={{ 
-      destinations, 
-      addDestination, 
-      updateDestination, 
+    <DestinationContext.Provider value={{
+      destinations,
+      addDestination,
+      updateDestination,
       deleteDestination,
       getDestinationById
     }}>
@@ -51,10 +53,4 @@ export const DestinationProvider = ({ children }: { children: ReactNode }) => {
   );
 };
 
-export const useDestinations = () => {
-  const context = useContext(DestinationContext);
-  if (context === undefined) {
-    throw new Error('useDestinations must be used within a DestinationProvider');
-  }
-  return context;
-};
+export const useDestinations = () => useContext(DestinationContext);

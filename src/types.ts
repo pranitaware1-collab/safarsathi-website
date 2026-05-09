@@ -22,6 +22,7 @@ export interface Destination {
   tripPlanUrl?: string;
   bookingFormUrl?: string;
   itineraryPdfUrl2?: string;
+
 googleSheetUrl?: string;
 price?: string;
 }
