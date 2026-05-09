@@ -20,65 +20,93 @@ export const AdminNoticeBoard: React.FC<AdminNoticeBoardProps> = ({
   handleSaveNotice
 }) => {
   return (
-    <div className="max-w-4xl mx-auto">
-      <div className="flex justify-between items-center mb-12">
+    <motion.div 
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4 }}
+      className="max-w-5xl mx-auto"
+    >
+
+      {/* HEADER */}
+      <div className="flex justify-between items-center mb-10">
         <div>
-          <h1 className="text-4xl font-black text-gray-900 mb-2 uppercase tracking-tighter">Notice Board</h1>
-          <p className="text-indigo-600 font-bold italic tracking-wide text-sm">Update the announcement displayed on the Contact page</p>
+          <h1 className="text-4xl font-black text-gray-900 tracking-tight">
+            Notice Board
+          </h1>
+          <p className="text-indigo-600 font-semibold mt-1">
+            Update announcements for users in real time
+          </p>
         </div>
-        <button 
+
+        {/* SAVE BUTTON */}
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
           onClick={handleSaveNotice}
           disabled={isSavingNotice}
-          className="bg-indigo-600 text-white px-8 py-4 rounded-2xl font-bold flex items-center space-x-2 hover:bg-indigo-700 transition-all shadow-xl shadow-indigo-100 disabled:opacity-50"
+          className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-7 py-3 rounded-2xl font-bold flex items-center gap-2 shadow-lg hover:shadow-indigo-200 transition-all disabled:opacity-50"
         >
-          {isSavingNotice ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
-          <span>{isSavingNotice ? 'Saving...' : 'Save Notice'}</span>
-        </button>
+          {isSavingNotice ? (
+            <Loader2 className="w-5 h-5 animate-spin" />
+          ) : (
+            <Save className="w-5 h-5" />
+          )}
+          {isSavingNotice ? 'Saving...' : 'Save Notice'}
+        </motion.button>
       </div>
 
-      <AnimatePresence mode="wait">
+      {/* MESSAGE */}
+      <AnimatePresence>
         {noticeMessage && (
-          <motion.div 
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0 }}
             className={cn(
-              "mb-8 p-4 rounded-2xl border flex items-center space-x-3",
-              noticeMessage.type === 'success' ? "bg-green-50 border-green-100 text-green-700" : "bg-red-50 border-red-100 text-red-700"
+              "mb-6 p-4 rounded-2xl border font-semibold shadow-sm",
+              noticeMessage.type === 'success'
+                ? "bg-green-50 border-green-200 text-green-700"
+                : "bg-red-50 border-red-200 text-red-700"
             )}
           >
-            <div className={cn(
-              "w-2 h-2 rounded-full",
-              noticeMessage.type === 'success' ? "bg-green-500" : "bg-red-500"
-            )} />
-            <span className="font-bold text-sm">{noticeMessage.text}</span>
+            {noticeMessage.text}
           </motion.div>
         )}
       </AnimatePresence>
 
-      <div className="bg-white p-10 rounded-[3rem] border border-gray-100 shadow-xl">
-        <div className="space-y-6">
-          <div className="space-y-2">
-            <div className="flex items-center justify-between mb-2">
-              <label className="text-xs font-bold text-gray-400 uppercase tracking-widest ml-1">Announcement Content</label>
-              <span className="text-[10px] font-bold text-indigo-400 bg-indigo-50 px-2 py-1 rounded-full uppercase tracking-tighter">Supports Any Language</span>
-            </div>
-            <textarea 
-              rows={20}
-              value={noticeContent}
-              onChange={(e) => setNoticeContent(e.target.value)}
-              placeholder="Enter the notice board content here... Use new lines for spacing."
-              className="w-full px-8 py-8 rounded-[2rem] bg-gray-50 border border-gray-100 focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all outline-none text-lg leading-relaxed resize-none"
-            />
-          </div>
-          
-          <div className="p-6 bg-amber-50 rounded-2xl border border-amber-100">
-            <p className="text-sm text-amber-700">
-              <span className="font-black">Note:</span> This content will be displayed on the SafarSathi Notice Board on the contact page. You can paste unlimited text and use any language support (Hindi, Marathi, etc.).
+      {/* CARD */}
+      <motion.div
+        whileHover={{ scale: 1.01 }}
+        className="bg-white rounded-[2.5rem] border border-gray-100 shadow-xl p-8 relative overflow-hidden"
+      >
+
+        {/* glow background */}
+        <div className="absolute -top-10 -right-10 w-40 h-40 bg-indigo-200 blur-3xl opacity-30 rounded-full" />
+        <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-purple-200 blur-3xl opacity-30 rounded-full" />
+
+        {/* TEXTAREA */}
+        <div className="relative z-10">
+          <label className="text-xs font-bold text-gray-500 uppercase tracking-widest">
+            Announcement Content
+          </label>
+
+          <textarea
+            rows={18}
+            value={noticeContent}
+            onChange={(e) => setNoticeContent(e.target.value)}
+            placeholder="Write your notice here..."
+            className="w-full mt-3 px-6 py-6 rounded-2xl bg-gray-50 border border-gray-200 focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all outline-none text-base leading-relaxed resize-none shadow-inner"
+          />
+
+          {/* INFO BOX */}
+          <div className="mt-6 p-5 rounded-2xl bg-gradient-to-r from-amber-50 to-yellow-50 border border-amber-200">
+            <p className="text-sm text-amber-700 font-medium">
+              <span className="font-bold">Note:</span> This notice will be visible to all users instantly on the website.
             </p>
           </div>
         </div>
-      </div>
-    </div>
+      </motion.div>
+
+    </motion.div>
   );
 };

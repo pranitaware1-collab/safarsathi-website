@@ -2,7 +2,7 @@ export interface ItineraryDay {
   day: number;
   activities: string[];
   itineraryPdfUrl2?: string;
-  googleSheetUrl?: string;
+  
 }
 
 export interface Destination {
@@ -23,6 +23,7 @@ export interface Destination {
   bookingFormUrl?: string;
   itineraryPdfUrl2?: string;
 googleSheetUrl?: string;
+price?: string;
 }
 
 export interface WeatherInfo {

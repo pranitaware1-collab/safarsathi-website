@@ -78,6 +78,7 @@ export const AdminDashboard = () => {
       longDescription: '',
       budgetEstimate: '',
       bestTimeToVisit: '',
+      price: '',
       coordinates: { lat: 0, lng: 0 },
       itinerary: [],
       nearbyHotels: [],
@@ -164,6 +165,9 @@ export const AdminDashboard = () => {
                 <div>
                   <h2 className="font-bold">{dest.name}</h2>
                   <p className="text-sm text-gray-500">{dest.budgetEstimate}</p>
+                  <p className="text-green-600 font-semibold">
+                   ₹{dest.price}
+                   </p>
 
                   {/* NEW LINKS DISPLAY */}
                   {dest.googleSheetUrl && (
@@ -205,6 +209,14 @@ export const AdminDashboard = () => {
                   value={editForm.description || ''}
                   onChange={e => setEditForm({ ...editForm, description: e.target.value })}
                 />
+                <input
+                 className="border p-2 rounded-xl w-full"
+                  placeholder="Price (e.g. ₹5000 per person)"
+                   value={editForm.price || ''}
+                    onChange={(e) =>
+                         setEditForm({ ...editForm, price: e.target.value })
+                      }
+                     />
 
                 {/* ITINERARY LINKS */}
                 <input placeholder="Itinerary PDF 1"

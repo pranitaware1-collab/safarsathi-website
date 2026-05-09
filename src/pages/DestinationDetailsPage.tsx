@@ -471,6 +471,7 @@ export const DestinationDetailsPage = () => {
                 <p className="text-xs text-gray-400 text-center font-medium">
                   Share this trip with your friends and family to start planning together!
                 </p>
+                
               </div>
             </motion.div>
           </div>
