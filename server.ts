@@ -3,23 +3,42 @@ dotenv.config();
 
 import express from "express";
 import cors from "cors";
-import path from "path";
 import nodemailer from "nodemailer";
 import twilio from "twilio";
 
+const app = express();
+const PORT: number = process.env.PORT ? Number(process.env.PORT) : 3000;
+
+// -------------------------
+// MIDDLEWARE
+// -------------------------
+app.use(cors());
+app.use(express.json());
+
+// -------------------------
+// NODEMAILER
+// -------------------------
 const transporter = nodemailer.createTransport({
-  service: "gmail",
+  host: "smtp.gmail.com",
+  port: 465,
+  secure: true,
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS,
   },
 });
 
-const app = express();
-const PORT: number = process.env.PORT ? Number(process.env.PORT) : 3000;
-// ✅ MUST be at top
-app.use(cors());
-app.use(express.json());
+// -------------------------
+// SAFE MAIL FUNCTION
+// -------------------------
+const sendMailSafe = async (mailOptions: any) => {
+  return Promise.race([
+    transporter.sendMail(mailOptions),
+    new Promise((_, reject) =>
+      setTimeout(() => reject(new Error("Email timeout")), 10000)
+    ),
+  ]);
+};
 
 // -------------------------
 // HEALTH CHECK
@@ -29,7 +48,7 @@ app.get("/healthz", (req, res) => {
 });
 
 // -------------------------
-// CONTACT API (FIXED)
+// CONTACT API
 // -------------------------
 app.post("/api/contact", async (req, res) => {
   const { name, email, message } = req.body;
@@ -42,26 +61,40 @@ app.post("/api/contact", async (req, res) => {
     console.log("Contact received:", req.body);
 
     // EMAIL TO OWNER
-    await transporter.sendMail({
+    await sendMailSafe({
       from: process.env.EMAIL_USER,
-      to: process.env.OWNER_EMAIL, // owner email
+      to: process.env.OWNER_EMAIL,
       subject: `New Contact Message from ${name}`,
       text: `Name: ${name}\nEmail: ${email}\nMessage: ${message}`,
     });
 
     // EMAIL TO USER
-    await transporter.sendMail({
+    await sendMailSafe({
       from: process.env.EMAIL_USER,
-      to: EMAIL_USER, // user email from form
-      subject: `We received your message - SafarSathi`,
-      text: `Hi ${name},\n\nWe received your message:\n\n${message}\n\nWe will contact you soon.\n\n- SafarSathi Team`,
+      to: email,
+      subject: "We received your message - SafarSathi",
+      text: `Hi ${name},
+
+We received your message:
+
+${message}
+
+We will contact you soon.
+
+- SafarSathi Team`,
     });
 
-    res.json({ success: true, message: "Emails sent successfully!" });
+    res.json({
+      success: true,
+      message: "Emails sent successfully!",
+    });
 
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Server error" });
+  } catch (err: any) {
+    console.error("EMAIL ERROR:", err);
+
+    res.status(500).json({
+      error: err.message || "Server error",
+    });
   }
 });
 
@@ -87,10 +120,17 @@ app.post("/api/plan-trip", async (req, res) => {
       to: clientPhone,
     });
 
-    res.json({ success: true, message: "Trip request sent!" });
+    res.json({
+      success: true,
+      message: "Trip request sent!",
+    });
+
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Server error" });
+
+    res.status(500).json({
+      error: "Server error",
+    });
   }
 });
 
