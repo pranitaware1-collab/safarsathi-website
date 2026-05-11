@@ -185,7 +185,13 @@ export const AdminDashboard = () => {
                 </div>
 
                 <div className="flex gap-2">
-                  <button onClick={() => { setIsEditing(dest.id); setEditForm(dest); }}>
+                 <button
+  onClick={() => {
+    if (!dest.id) return;
+    setIsEditing(dest.id);
+    setEditForm(dest);
+  }}
+>
                     <Edit2 />
                   </button>
                   <button>
@@ -228,6 +234,23 @@ export const AdminDashboard = () => {
                   value={editForm.itineraryPdfUrl || ''}
                   onChange={e => setEditForm({ ...editForm, itineraryPdfUrl: e.target.value })}
                 />
+
+                <select
+  className="border p-2 w-full"
+  value={editForm.category || 'Cities'}
+  onChange={(e) =>
+  setEditForm({
+    ...editForm,
+    category: e.target.value as Destination['category']
+  })
+}
+>
+  <option value="Beaches">Beaches</option>
+  <option value="Mountains">Mountains</option>
+ <option value="Historical Places">Historical Places</option>
+  <option value="Cities">Cities</option>
+  <option value="Religious">Religious</option>
+</select>
 
                 <button onClick={handleSave}
                   className="bg-indigo-600 text-white px-5 py-2 rounded-xl w-full">

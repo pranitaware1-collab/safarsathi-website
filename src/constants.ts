@@ -3,7 +3,7 @@ export const CATEGORIES = [
   'All',
   'Beaches',
   'Mountains',
-  'Historical',
+  'Historical Places',
   'Cities',
-  'Religious'
+  'Religious Places'
 ] as const;

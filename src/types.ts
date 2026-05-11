@@ -11,11 +11,11 @@ export interface Destination {
   name: string;
 
   category:
-    | 'Beaches'
-    | 'Mountains'
-    | 'Historical Places'
-    | 'Cities'
-    | 'Religious Places';
+  | 'Beaches'
+  | 'Mountains'
+  | 'Historical Places'
+  | 'Cities'
+  | 'Religious Places';
 
   image: string;
 

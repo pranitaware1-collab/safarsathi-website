@@ -10,7 +10,9 @@ export const ExplorePage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const { destinations } = useDestinations();
   const [searchQuery, setSearchQuery] = useState(searchParams.get('q') || '');
-  const [selectedCategory, setSelectedCategory] = useState('All');
+ const [selectedCategory, setSelectedCategory] = useState(
+  searchParams.get('category') || 'All'
+);
   const [isFilterOpen, setIsFilterOpen] = useState(true);
 
   const filteredDestinations = useMemo(() => {
