@@ -10,27 +10,27 @@ export const ExplorePage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const { destinations } = useDestinations();
   const [searchQuery, setSearchQuery] = useState(searchParams.get('q') || '');
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(searchParams.get('category'));
+  const [selectedCategory, setSelectedCategory] = useState('All');
   const [isFilterOpen, setIsFilterOpen] = useState(true);
 
   const filteredDestinations = useMemo(() => {
-    return destinations.filter(dest => {
-      const matchesSearch = dest.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          dest.description.toLowerCase().includes(searchQuery.toLowerCase());
-      const matchesCategory = !selectedCategory || dest.category === selectedCategory;
-      return matchesSearch && matchesCategory;
-    });
-  }, [searchQuery, selectedCategory, destinations]);
+  return destinations.filter(dest => {
+    const matchesSearch =
+      dest.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      dest.description.toLowerCase().includes(searchQuery.toLowerCase());
 
-  const handleCategorySelect = (category: string | null) => {
-    setSelectedCategory(category);
-    if (category) {
-      searchParams.set('category', category);
-    } else {
-      searchParams.delete('category');
-    }
-    setSearchParams(searchParams);
-  };
+    const matchesCategory =
+      selectedCategory === 'All' ||
+      dest.category === selectedCategory;
+
+    return matchesSearch && matchesCategory;
+  });
+}, [searchQuery, selectedCategory, destinations]);
+const handleCategorySelect = (category: string) => {
+  setSelectedCategory(category);
+  searchParams.set('category', category);
+  setSearchParams(searchParams);
+};
 
   return (
     <div className="pt-24 min-h-screen bg-gray-50">
@@ -77,7 +77,7 @@ export const ExplorePage = () => {
             >
               <div className="flex flex-wrap gap-3 p-6 bg-white rounded-2xl border border-gray-100 shadow-sm">
                 <button
-                  onClick={() => handleCategorySelect(null)}
+                 onClick={() => handleCategorySelect('All')}
                   className={cn(
                     "px-6 py-2.5 rounded-full text-sm font-semibold transition-all",
                     !selectedCategory ? "bg-indigo-600 text-white shadow-lg shadow-indigo-100" : "bg-gray-100 text-gray-600 hover:bg-gray-200"
@@ -174,7 +174,7 @@ export const ExplorePage = () => {
             <h3 className="text-2xl font-bold text-gray-900 mb-2">No destinations found</h3>
             <p className="text-gray-500 max-w-sm mx-auto">Try adjusting your search or category filters to find what you're looking for.</p>
             <button 
-              onClick={() => { setSearchQuery(''); setSelectedCategory(null); }}
+              onClick={() => { setSearchQuery(''); setSelectedCategory('All'); }}
               className="mt-8 text-indigo-600 font-bold hover:underline"
             >
               Clear all filters
