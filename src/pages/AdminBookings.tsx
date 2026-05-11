@@ -26,6 +26,26 @@ export const AdminBookings = () => {
 
     setBookings(data);
   };
+
+  const downloadCSV = () => {
+
+  const worksheet =
+    XLSX.utils.json_to_sheet(bookings);
+
+  const workbook =
+    XLSX.utils.book_new();
+
+  XLSX.utils.book_append_sheet(
+    workbook,
+    worksheet,
+    'Bookings'
+  );
+
+  XLSX.writeFile(
+    workbook,
+    'SafarSathiBookings.xlsx'
+  );
+};
 const exportBookings = () => {
 
   const worksheet =
@@ -51,6 +71,12 @@ const exportBookings = () => {
       <h1 className="text-3xl font-bold mb-6">
         All Bookings
       </h1>
+      <button
+  onClick={downloadCSV}
+  className="mb-6 bg-green-600 text-white px-5 py-3 rounded-2xl font-bold"
+>
+  Download CSV
+</button>
 
       <button
   onClick={exportBookings}
