@@ -53,11 +53,14 @@ const handleNext = async (e: React.FormEvent<HTMLFormElement>) => {
   }
 
   // 🔴 EMAIL (STRONG VALIDATION)
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailRegex.test(formData.email.trim())) {
-    alert("Enter valid email address");
-    return;
-  }
+  const email = formData.email.trim();
+
+const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+if (!emailRegex.test(email)) {
+  alert("Enter valid email (example: name@gmail.com)");
+  return;
+}
 
   // 🔴 PHONE
   const phoneRegex = /^[0-9]{10}$/;
