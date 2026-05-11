@@ -6,25 +6,49 @@ export interface ItineraryDay {
 }
 
 export interface Destination {
-  id: string;
+  id?: string;
+
   name: string;
-  category: 'Beaches' | 'Mountains' | 'Historical Places' | 'Cities' | 'Religious Places';
+
+  category:
+    | 'Beaches'
+    | 'Mountains'
+    | 'Historical Places'
+    | 'Cities'
+    | 'Religious Places';
+
   image: string;
+
   description: string;
+
   longDescription: string;
+
   budgetEstimate: string;
+
   bestTimeToVisit: string;
+
   nearbyHotels: string[];
+
   nearbyRestaurants: string[];
-  coordinates: { lat: number; lng: number };
+
+  coordinates: {
+    lat: number;
+    lng: number;
+  };
+
   itinerary?: ItineraryDay[];
+
   itineraryPdfUrl?: string;
+
   tripPlanUrl?: string;
+
   bookingFormUrl?: string;
+
   itineraryPdfUrl2?: string;
 
-googleSheetUrl?: string;
-price?: string;
+  googleSheetUrl?: string;
+
+  price?: string;
 }
 
 export interface WeatherInfo {

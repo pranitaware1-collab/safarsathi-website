@@ -72,14 +72,16 @@ export const DestinationProvider: React.FC<{
 
   // ADD
   const addDestination = async (
-    d: Destination
-  ) => {
+  d: Destination
+) => {
 
-    await addDoc(
-      collection(db, "trips"),
-      d
-    );
-  };
+  const { id, ...tripData } = d;
+
+  await addDoc(
+    collection(db, "trips"),
+    tripData
+  );
+};
 
   // UPDATE
   const updateDestination = async (
