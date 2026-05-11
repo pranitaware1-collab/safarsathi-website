@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { X, Send, Phone, Mail, User, CheckCircle2, AlertCircle } from 'lucide-react';
 import { cn } from '../lib/utils';
+import { saveBooking }
+from '../services/bookingService';
 
 interface BookingModalProps {
   isOpen: boolean;
@@ -11,26 +13,67 @@ interface BookingModalProps {
 }
 
 export const BookingModal = ({ isOpen, onClose, destinationName, bookingFormUrl }: BookingModalProps) => {
-  const [formData, setFormData] = useState({
-    clientName: '',
-    clientPhone: '',
-  });
+ const [formData, setFormData] = useState({
+  fullName: '',
+  age: '',
+  email: '',
+  phone: '',
+  address: '',
+  members: '1',
+});
   const [step, setStep] = useState<'form' | 'links'>('form');
-  const [hasOpenedSheet, setHasOpenedSheet] = useState(false);
+  
+
   const [hasSentWa1, setHasSentWa1] = useState(false);
 
-  const handleNext = (e: React.FormEvent) => {
-    e.preventDefault();
-    setStep('links');
-  };
+  const isBookingComplete = hasSentWa1;
+  
+const handleNext = async (
+  e: React.FormEvent
+) => {
+
+  e.preventDefault();
+
+  await saveBooking({
+    tripName: destinationName,
+    fullName: formData.fullName,
+    age: formData.age,
+    email: formData.email,
+    phone: formData.phone,
+    address: formData.address,
+    members: formData.members
+  });
+
+  setStep('links');
+};
 
   const sendWhatsApp = (number: string) => {
-    const message = `Hello, I am ${formData.clientName} (${formData.clientPhone}). I want to confirm my booking for the trip to ${destinationName}. I have filled the Google Sheet.`;
-    window.open(`https://wa.me/${number}?text=${encodeURIComponent(message)}`, '_blank');
-    setHasSentWa1(true);
-  };
 
-  const isBookingComplete = hasOpenedSheet && hasSentWa1;
+ const message =
+`Hello Suyog Aware,
+
+New Trip Booking Request
+
+Trip: ${destinationName}
+
+Name: ${formData.fullName}
+Age: ${formData.age}
+Phone: ${formData.phone}
+Email: ${formData.email}
+Address: ${formData.address}
+Total Members: ${formData.members}
+
+Please confirm my booking.`;
+
+  window.open(
+    `https://wa.me/${number}?text=${encodeURIComponent(message)}`,
+    '_blank'
+  );
+
+  setHasSentWa1(true);
+};
+
+ 
 
   return (
     <AnimatePresence>
@@ -69,38 +112,7 @@ export const BookingModal = ({ isOpen, onClose, destinationName, bookingFormUrl 
                   </div>
 
                   <div className="space-y-4">
-                    {/* Step 1: Google Sheet */}
-                    <div className={cn(
-                      "p-5 rounded-3xl border transition-all duration-500",
-                      hasOpenedSheet ? "bg-green-50 border-green-200" : "bg-gray-50 border-gray-100"
-                    )}>
-                      <div className="flex items-center justify-between mb-3">
-                        <div className="flex items-center space-x-3">
-                          <div className={cn(
-                            "w-8 h-8 rounded-lg flex items-center justify-center font-bold text-sm shadow-sm",
-                            hasOpenedSheet ? "bg-green-500 text-white" : "bg-white text-indigo-600"
-                          )}>1</div>
-                          <h4 className="font-bold text-gray-900 text-sm">Fill Booking Sheet</h4>
-                        </div>
-                        {hasOpenedSheet && <CheckCircle2 className="w-5 h-5 text-green-500" />}
-                      </div>
-                      <a 
-                        href={bookingFormUrl || '#'} 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        onClick={() => setHasOpenedSheet(true)}
-                        className={cn(
-                          "w-full py-3 rounded-xl font-bold flex items-center justify-center space-x-2 transition-all text-sm",
-                          hasOpenedSheet 
-                            ? "bg-green-100 text-green-700 border border-green-200" 
-                            : "bg-indigo-600 text-white hover:bg-indigo-700 shadow-lg shadow-indigo-100"
-                        )}
-                      >
-                        <Send className="w-4 h-4" />
-                        <span>{hasOpenedSheet ? 'Sheet Opened' : 'Open Google Sheet'}</span>
-                      </a>
-                    </div>
-
+                  
                     {/* Step 2: WhatsApp Confirmation */}
                     <div className={cn(
                       "p-5 rounded-3xl border transition-all duration-500 relative overflow-hidden",
@@ -176,29 +188,128 @@ export const BookingModal = ({ isOpen, onClose, destinationName, bookingFormUrl 
                         <input
                           required
                           type="text"
-                          value={formData.clientName}
-                          onChange={(e) => setFormData({ ...formData, clientName: e.target.value })}
+                         value={formData.fullName}
+
+                          onChange={(e) =>
+                         setFormData({
+                        ...formData,
+                    fullName: e.target.value
+                      })
+                      }
                           placeholder="John Doe"
                           className="w-full pl-12 pr-4 py-4 rounded-2xl bg-gray-50 border border-gray-100 focus:ring-2 focus:ring-indigo-500 outline-none transition-all"
                         />
                       </div>
                     </div>
 
+                           <div className="space-y-2">
+                          <label className="text-xs font-bold text-gray-400 uppercase tracking-widest ml-1">
+                       Age
+  </label>
+
+  <input
+    required
+    type="number"
+    min="1"
+    max="100"
+    value={formData.age}
+    onChange={(e) =>
+      setFormData({
+        ...formData,
+        age: e.target.value
+      })
+    }
+    placeholder="Enter age"
+    className="w-full px-4 py-4 rounded-2xl bg-gray-50 border border-gray-100 focus:ring-2 focus:ring-indigo-500 outline-none transition-all"
+  />
+</div>
+
                     <div className="space-y-2">
                       <label className="text-xs font-bold text-gray-400 uppercase tracking-widest ml-1">Mobile Number</label>
                       <div className="relative">
                         <Phone className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
-                        <input
+                        <input 
                           required
                           type="tel"
-                          value={formData.clientPhone}
-                          onChange={(e) => setFormData({ ...formData, clientPhone: e.target.value })}
+                          pattern="[0-9]{10}"
+                          value={formData.phone}
+
+                            onChange={(e) =>
+                           setFormData({
+                          ...formData,
+                            phone: e.target.value
+                             })
+                             }
                           placeholder="+91 98765 43210"
                           className="w-full pl-12 pr-4 py-4 rounded-2xl bg-gray-50 border border-gray-100 focus:ring-2 focus:ring-indigo-500 outline-none transition-all"
                         />
                       </div>
                     </div>
 
+                    <div className="space-y-2">
+  <label className="text-xs font-bold text-gray-400 uppercase tracking-widest ml-1">
+    Email
+  </label>
+
+  <div className="relative">
+    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+
+    <input
+      required
+      type="email"
+      value={formData.email}
+      onChange={(e) =>
+        setFormData({
+          ...formData,
+          email: e.target.value
+        })
+      }
+      placeholder="example@gmail.com"
+      className="w-full pl-12 pr-4 py-4 rounded-2xl bg-gray-50 border border-gray-100 focus:ring-2 focus:ring-indigo-500 outline-none transition-all"
+    />
+  </div>
+</div>
+                    <div className="space-y-2">
+  <label className="text-xs font-bold text-gray-400 uppercase tracking-widest ml-1">
+    Address
+  </label>
+
+  <input
+    required
+    type="text"
+    value={formData.address}
+    onChange={(e) =>
+      setFormData({
+        ...formData,
+        address: e.target.value
+      })
+    }
+    placeholder="Enter address"
+    className="w-full px-4 py-4 rounded-2xl bg-gray-50 border border-gray-100 focus:ring-2 focus:ring-indigo-500 outline-none transition-all"
+  />
+</div>
+
+<div className="space-y-2">
+  <label className="text-xs font-bold text-gray-400 uppercase tracking-widest ml-1">
+    Total Members
+  </label>
+
+  <input
+    required
+    type="number"
+    min="1"
+    max="20"
+    value={formData.members}
+    onChange={(e) =>
+      setFormData({
+        ...formData,
+        members: e.target.value
+      })
+    }
+    placeholder="Total members"
+    className="w-full px-4 py-4 rounded-2xl bg-gray-50 border border-gray-100 focus:ring-2 focus:ring-indigo-500 outline-none transition-all"
+  />
+</div>
                     <button
                       type="submit"
                       className="w-full py-5 bg-indigo-600 text-white rounded-2xl font-bold flex items-center justify-center space-x-3 hover:bg-indigo-700 transition-all shadow-xl shadow-indigo-100"

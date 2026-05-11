@@ -45,6 +45,19 @@ match /trips/{tripId} {
   // Only admin can create/update/delete
   allow create, update, delete: if isAdmin();
 }
+  // Bookings Collection
+match /bookings/{bookingId} {
+
+  // Anyone can create booking
+  allow create: if true;
+
+  // Only admin can read bookings
+  allow read: if isAdmin();
+
+  // Only admin can update/delete
+  allow update, delete: if isAdmin();
+}
+
     
     // Default deny
     match /{document=**} {

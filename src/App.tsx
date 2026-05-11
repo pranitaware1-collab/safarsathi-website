@@ -3,6 +3,8 @@ import { BrowserRouter as Router, Routes, Route, useLocation, Navigate } from 'r
 import { Navbar, Footer } from './components/Layout';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { DestinationProvider } from './context/DestinationContext';
+import { AdminBookings }
+from './pages/AdminBookings';
 
 // Lazy load pages for better performance
 const HomePage = lazy(() => import('./pages/HomePage').then(m => ({ default: m.HomePage })));
@@ -77,6 +79,10 @@ const AppContent = () => {
             {/* Protected Routes */}
             <Route path="/wishlist" element={<ProtectedRoute><WishlistPage /></ProtectedRoute>} />
             <Route path="/admin/dashboard" element={<AdminDashboard />} />
+            <Route
+            path="/admin/bookings"
+              element={<AdminBookings />}
+             />
           </Routes>
         </Suspense>
       </main>
