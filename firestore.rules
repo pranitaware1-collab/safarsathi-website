@@ -35,6 +35,16 @@ service cloud.firestore {
       allow update: if isAuthenticated() && resource.data.userId == request.auth.uid;
       allow delete: if isAuthenticated() && (resource.data.userId == request.auth.uid || isAdmin());
     }
+
+    // Trips Collection
+match /trips/{tripId} {
+
+  // Anyone can read trips
+  allow read: if true;
+
+  // Only admin can create/update/delete
+  allow create, update, delete: if isAdmin();
+}
     
     // Default deny
     match /{document=**} {
