@@ -26,7 +26,12 @@ const convertDrivePdf = (url: string) => {
 /* ---------------- MAIN ---------------- */
 export const AdminDashboard = () => {
   const { isAdmin, logout } = useAuth();
-  const { destinations, addDestination, updateDestination } = useDestinations();
+ const {
+  destinations,
+  addDestination,
+  updateDestination,
+  deleteDestination
+} = useDestinations();
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -61,6 +66,17 @@ export const AdminDashboard = () => {
     alert('Notice Updated');
   };
 
+  const handleDelete = async (id: string) => {
+
+  const confirmDelete = window.confirm(
+    "Are you sure you want to delete this trip?"
+  );
+
+  if (!confirmDelete) return;
+
+  await deleteDestination(id);
+};
+
   /* ADD */
   const handleAdd = () => {
     setIsAdding(true);
@@ -88,6 +104,10 @@ export const AdminDashboard = () => {
   /* SAVE */
   const handleSave = () => {
   let data: Destination = { ...editForm } as Destination;
+
+  const handleDelete = async (id: string) => {
+
+};
 
   // ensure ID exists
   if (!data.id) {
@@ -194,9 +214,11 @@ export const AdminDashboard = () => {
 >
                     <Edit2 />
                   </button>
-                  <button>
-                    <Trash2 />
-                  </button>
+                 <button
+           onClick={() => dest.id && handleDelete(dest.id)}
+              >
+              <Trash2 />
+                 </button>
                 </div>
               </div>
             ))}

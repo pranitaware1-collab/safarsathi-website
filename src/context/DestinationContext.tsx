@@ -27,6 +27,7 @@ interface ContextType {
     d: Destination
   ) => Promise<void>;
 
+
   deleteDestination: (
     id: string
   ) => Promise<void>;
