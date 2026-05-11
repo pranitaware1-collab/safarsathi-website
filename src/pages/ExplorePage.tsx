@@ -114,13 +114,23 @@ export const ExplorePage = () => {
                 className="group bg-white rounded-[2rem] overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 border border-gray-100"
               >
                 <div className="relative h-64 overflow-hidden">
-                  <img 
-                    src={dest.image} 
-                    alt={dest.name} 
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                    referrerPolicy="no-referrer"
-                    loading="lazy"
-                  />
+                  <img
+              src={dest.image}
+              alt={dest.name}
+
+                 onError={(e) => {
+
+               console.log(
+               "FAILED IMAGE:",
+              dest.image
+                 );
+
+                e.currentTarget.src =
+                "https://via.placeholder.com/400x300?text=Image+Not+Found";
+                   }}
+
+                 className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                 />
                   <div className="absolute bottom-4 left-4 flex flex-col gap-2">
                     <span className="bg-indigo-600/90 backdrop-blur-md text-white text-xs font-bold px-3 py-1.5 rounded-lg uppercase tracking-wider w-fit">
                       {dest.category}
