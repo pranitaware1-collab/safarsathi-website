@@ -33,31 +33,36 @@ export const BookingModal = ({
 
   const isBookingComplete = hasSentWa1;
 
-  const handleNext = async (e: React.FormEvent<HTMLFormElement>) => {
+const handleNext = async (e: React.FormEvent<HTMLFormElement>) => {
   e.preventDefault();
 
-  // 🔴 FULL NAME
-  if (formData.fullName.trim().length < 3) {
-    alert("Name must be at least 3 characters");
+  console.log("VALIDATION RUNNING");
+
+  // 🔴 NAME (ONLY LETTERS + MIN 3)
+  const nameRegex = /^[A-Za-z ]{3,50}$/;
+  if (!nameRegex.test(formData.fullName.trim())) {
+    alert("Enter valid name (only letters, min 3 chars)");
     return;
   }
 
   // 🔴 AGE
   const age = Number(formData.age);
-  if (!age || age < 1 || age > 100) {
+  if (isNaN(age) || age < 1 || age > 100) {
     alert("Enter valid age (1-100)");
     return;
   }
 
-  // 🔴 EMAIL
-  if (!formData.email.includes("@")) {
-    alert("Enter valid email");
+  // 🔴 EMAIL (STRONG VALIDATION)
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(formData.email.trim())) {
+    alert("Enter valid email address");
     return;
   }
 
-  // 🔴 PHONE (IMPORTANT - 10 DIGITS ONLY)
-  if (!/^[0-9]{10}$/.test(formData.phone)) {
-    alert("Phone number must be exactly 10 digits");
+  // 🔴 PHONE
+  const phoneRegex = /^[0-9]{10}$/;
+  if (!phoneRegex.test(formData.phone)) {
+    alert("Phone must be exactly 10 digits");
     return;
   }
 
@@ -69,12 +74,11 @@ export const BookingModal = ({
 
   // 🔴 MEMBERS
   const members = Number(formData.members);
-  if (!members || members < 1 || members > 20) {
-    alert("Members must be between 1 to 20");
+  if (members < 1 || members > 20) {
+    alert("Members must be between 1-20");
     return;
   }
 
-  // ✅ SAVE ONLY IF VALID
   await saveBooking({
     tripName: destinationName,
     fullName: formData.fullName,
@@ -87,7 +91,6 @@ export const BookingModal = ({
 
   setStep('links');
 };
-
   const sendWhatsApp = (number: string) => {
     const message = `
 Hello Suyog Aware,
