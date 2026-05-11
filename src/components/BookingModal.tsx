@@ -33,21 +33,60 @@ export const BookingModal = ({
 
   const isBookingComplete = hasSentWa1;
 
-  const handleNext = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleNext = async (e: React.FormEvent<HTMLFormElement>) => {
+  e.preventDefault();
 
-    await saveBooking({
-      tripName: destinationName,
-      fullName: formData.fullName,
-      age: formData.age,
-      email: formData.email,
-      phone: formData.phone,
-      address: formData.address,
-      members: formData.members
-    });
+  // 🔴 FULL NAME
+  if (formData.fullName.trim().length < 3) {
+    alert("Name must be at least 3 characters");
+    return;
+  }
 
-    setStep('links');
-  };
+  // 🔴 AGE
+  const age = Number(formData.age);
+  if (!age || age < 1 || age > 100) {
+    alert("Enter valid age (1-100)");
+    return;
+  }
+
+  // 🔴 EMAIL
+  if (!formData.email.includes("@")) {
+    alert("Enter valid email");
+    return;
+  }
+
+  // 🔴 PHONE (IMPORTANT - 10 DIGITS ONLY)
+  if (!/^[0-9]{10}$/.test(formData.phone)) {
+    alert("Phone number must be exactly 10 digits");
+    return;
+  }
+
+  // 🔴 ADDRESS
+  if (formData.address.trim().length < 10) {
+    alert("Address must be at least 10 characters");
+    return;
+  }
+
+  // 🔴 MEMBERS
+  const members = Number(formData.members);
+  if (!members || members < 1 || members > 20) {
+    alert("Members must be between 1 to 20");
+    return;
+  }
+
+  // ✅ SAVE ONLY IF VALID
+  await saveBooking({
+    tripName: destinationName,
+    fullName: formData.fullName,
+    age: formData.age,
+    email: formData.email,
+    phone: formData.phone,
+    address: formData.address,
+    members: formData.members
+  });
+
+  setStep('links');
+};
 
   const sendWhatsApp = (number: string) => {
     const message = `
@@ -192,6 +231,7 @@ Please confirm my booking.
                   <input
                     required
                     placeholder="Full Name"
+                    
                     value={formData.fullName}
                     onChange={(e) =>
                       setFormData({
@@ -200,6 +240,7 @@ Please confirm my booking.
                       })
                     }
                     className="w-full p-3 border rounded-xl"
+                    
                   />
 
                   <input
@@ -234,7 +275,9 @@ Please confirm my booking.
                     required
                     type="tel"
                     placeholder="Phone"
+                    
                     value={formData.phone}
+                    
                     onChange={(e) =>
                       setFormData({
                         ...formData,
@@ -242,6 +285,7 @@ Please confirm my booking.
                       })
                     }
                     className="w-full p-3 border rounded-xl"
+                    
                   />
 
                   <input
