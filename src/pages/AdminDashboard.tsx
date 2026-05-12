@@ -7,7 +7,7 @@ import { useAuth } from '../context/AuthContext';
 import { useDestinations } from '../context/DestinationContext';
 import { Destination } from '../types';
 import { cn } from '../lib/utils';
-
+import { Booking } from '../types';
 import { getNotice, updateNotice } from '../services/settingsService';
 
 /* ---------------- DRIVE HELPERS ---------------- */
@@ -47,7 +47,14 @@ export const AdminDashboard = () => {
 
   const [notice, setNotice] = useState('');
 
+  const [bookings, setBookings] = useState<Booking[]>([]);
+
   /* AUTH */
+  useEffect(() => {
+  // Firebase / API call इथे येईल
+  // example:
+  setBookings([]); // replace with real data
+}, []);
   useEffect(() => {
     if (!isAuthorized) navigate('/admin/login', { replace: true });
   }, [isAuthorized]);
@@ -76,7 +83,39 @@ export const AdminDashboard = () => {
 
   await deleteDestination(id);
 };
+const downloadCSV = (trip: any) => {
+  const headers = ["Name", "Age", "Phone", "Email", "Address"];
 
+  const rows = trip.members.map((m: any) => [
+    m.name,
+    m.age,
+    m.phone,
+    m.email,
+    m.address
+  ]);
+
+  const csvContent =
+    [headers, ...rows].map((r) => r.join(",")).join("\n");
+
+  const blob = new Blob([csvContent], { type: "text/csv" });
+  const url = window.URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `${trip.tripName}.csv`;
+  a.click();
+
+  window.URL.revokeObjectURL(url);
+};
+const deleteTrip = async (id: string) => {
+  const confirmDelete = window.confirm(
+    "Are you sure you want to delete this trip?"
+  );
+
+  if (!confirmDelete) return;
+
+  console.log("Delete trip:", id);
+};
   /* ADD */
   const handleAdd = () => {
     setIsAdding(true);
@@ -189,6 +228,30 @@ export const AdminDashboard = () => {
                   <h2 className="font-bold">{dest.name}</h2>
 
                   <p className="text-gray-500 text-sm">{dest.budgetEstimate}</p>
+
+                  <div className="flex gap-2 mt-2">
+
+  <button
+  onClick={() => {
+  const trip = bookings.find((b: Booking) => b.tripName === dest.name);
+
+  if (trip) {
+    downloadCSV(trip);
+  }
+}}
+    className="bg-green-600 text-white px-3 py-1 rounded-lg text-sm"
+  >
+    Download CSV
+  </button>
+
+  <button
+    onClick={() => dest.id && deleteTrip(dest.id)}
+    className="bg-red-600 text-white px-3 py-1 rounded-lg text-sm"
+  >
+    Delete Trip
+  </button>
+
+</div>
 
                   {/* PRICE FIX */}
                   <p className="text-green-600 font-bold">

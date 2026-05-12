@@ -74,3 +74,18 @@ export interface Recommendation {
   title: string;
   description: string;
 }
+
+export interface Member {
+  name: string;
+  age: string;
+  phone: string;
+  email: string;
+  address: string;
+}
+
+export interface Booking {
+  id?: string;
+  tripName: string;
+  createdAt: string;
+  members: Member[];
+}

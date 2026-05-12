@@ -80,10 +80,10 @@ export const BookingModal = ({
     }
 
     await saveBooking({
-      tripName: destinationName,
-      members: membersData
-    });
-
+  tripName: destinationName,
+  createdAt: new Date().toISOString().split("T")[0],
+  members: membersData
+});
     setStep('links');
   };
 
