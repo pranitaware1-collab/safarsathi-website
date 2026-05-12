@@ -70,6 +70,16 @@ match /bookings/{bookingId} {
   allow write: if isAdmin(); // Assuming you have an isAdmin() helper
 }
 
+ // bookings collection
+    match /bookings/{docId} {
+      allow read, write: if true;
+    }
+
+    // destinations collection
+    match /destinations/{docId} {
+      allow read, write: if true;
+    }
+
   }
   
 }
