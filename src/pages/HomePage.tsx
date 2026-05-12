@@ -78,14 +78,35 @@ export const HomePage = () => {
               }}
             />
           </motion.div>
-          <motion.h1 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="text-6xl md:text-8xl font-black text-white mb-4 tracking-tighter uppercase"
-          >
-            SAFARSATHI
-          </motion.h1>
+        <motion.h1
+  initial={{ opacity: 0, y: 20 }}
+  animate={{
+    opacity: 1,
+    y: [0, -8, 0],
+    scale: [1, 1.02, 1]
+  }}
+  transition={{
+    duration: 4,
+    repeat: Infinity
+  }}
+  className="
+    text-6xl
+    md:text-8xl
+    font-black
+    mb-4
+    tracking-tighter
+    uppercase
+    text-transparent
+    bg-clip-text
+    bg-gradient-to-r
+    from-indigo-400
+    via-pink-400
+    to-orange-300
+    drop-shadow-2xl
+  "
+>
+  SAFARSATHI
+</motion.h1>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -97,6 +118,25 @@ export const HomePage = () => {
               "पैसे बँक मे नही यादो मे जमा करो"
             </p>
           </motion.div>
+           <motion.img
+  src="/traveler.png"
+  alt="Traveler"
+  animate={{
+    x: [0, 40, 0]
+  }}
+  transition={{
+    duration: 6,
+    repeat: Infinity
+  }}
+  className="
+    w-24
+    md:w-36
+    mx-auto
+    mb-6
+    drop-shadow-2xl
+  "
+/>
+
 
           <motion.form 
             initial={{ opacity: 0, y: 20 }}
