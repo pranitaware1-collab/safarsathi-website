@@ -244,10 +244,21 @@ const deleteTrip = async (id: string) => {
 
  <button
   onClick={() => {
-    const trip = bookings.find(b => b.tripName === dest.name);
-    console.log("TRIP FOUND:", trip); // debug
-    if (trip) downloadCSV(trip);
-    else alert("Booking not found");
+    const trip = bookings.find(
+      b =>
+        b.tripName?.trim().toLowerCase() ===
+        dest.name?.trim().toLowerCase()
+    );
+
+    console.log("DEST:", dest.name);
+    console.log("BOOKINGS:", bookings);
+    console.log("FOUND TRIP:", trip);
+
+    if (trip) {
+      downloadCSV(trip);
+    } else {
+      alert("Booking not found");
+    }
   }}
 >
   Download CSV
