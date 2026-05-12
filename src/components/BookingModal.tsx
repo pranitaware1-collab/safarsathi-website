@@ -62,44 +62,153 @@ export const BookingModal = ({
 
 }, []);
 
-  /* ✅ VALIDATION + SAVE */
-  const handleNext = async (e: React.FormEvent) => {
-    e.preventDefault();
+ /* ✅ STRONG VALIDATION + SAVE */
+const handleNext = async (e: React.FormEvent) => {
 
-    if (membersData.length === 0) {
-      alert("Enter members");
+  e.preventDefault();
+
+  // MEMBERS CHECK
+  if (!membersData || membersData.length === 0) {
+    alert("Please enter member details");
+    return;
+  }
+
+  // DUPLICATE CHECK
+  const usedPhones = new Set();
+  const usedEmails = new Set();
+
+  for (let i = 0; i < membersData.length; i++) {
+
+    const m = membersData[i];
+
+    // REMOVE EXTRA SPACES
+    const name = m.name.trim();
+    const age = m.age.trim();
+    const phone = m.phone.trim();
+    const email = m.email.trim().toLowerCase();
+    const address = m.address.trim();
+
+    /* ---------------- REQUIRED ---------------- */
+
+    if (
+      !name ||
+      !age ||
+      !phone ||
+      !email ||
+      !address
+    ) {
+      alert(`All fields are mandatory for Member ${i + 1}`);
       return;
     }
 
-    for (let m of membersData) {
-      if (!m.name || !m.age || !m.phone || !m.email || !m.address) {
-        alert("Fill all member details");
-        return;
-      }
+    /* ---------------- NAME ---------------- */
 
-      if (!/^[A-Za-z ]{3,50}$/.test(m.name)) {
-        alert("Invalid name");
-        return;
-      }
-
-      if (!/^[0-9]{10}$/.test(m.phone)) {
-        alert("Invalid phone");
-        return;
-      }
-
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(m.email)) {
-        alert("Invalid email");
-        return;
-      }
+    if (!/^[A-Za-z ]{3,50}$/.test(name)) {
+      alert(
+        `Member ${i + 1}: Name must contain only letters (3-50 characters)`
+      );
+      return;
     }
 
-    await saveBooking({
-  tripName: destinationName,
-  createdAt: new Date().toISOString().split("T")[0],
-  members: membersData
-});
-    setStep('links');
-  };
+    // Prevent repeated spaces
+    if (name.includes("  ")) {
+      alert(`Member ${i + 1}: Invalid name format`);
+      return;
+    }
+
+    /* ---------------- AGE ---------------- */
+
+    const ageNumber = Number(age);
+
+    if (
+      isNaN(ageNumber) ||
+      ageNumber < 1 ||
+      ageNumber > 100
+    ) {
+      alert(
+        `Member ${i + 1}: Age must be between 1 and 100`
+      );
+      return;
+    }
+
+    /* ---------------- PHONE ---------------- */
+
+    if (!/^[6-9][0-9]{9}$/.test(phone)) {
+      alert(
+        `Member ${i + 1}: Enter valid Indian mobile number`
+      );
+      return;
+    }
+
+    // Duplicate phone check
+    if (usedPhones.has(phone)) {
+      alert(
+        `Duplicate phone number found for Member ${i + 1}`
+      );
+      return;
+    }
+
+    usedPhones.add(phone);
+
+    /* ---------------- EMAIL ---------------- */
+
+    if (
+      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+    ) {
+      alert(
+        `Member ${i + 1}: Invalid email address`
+      );
+      return;
+    }
+
+    // Duplicate email check
+    if (usedEmails.has(email)) {
+      alert(
+        `Duplicate email found for Member ${i + 1}`
+      );
+      return;
+    }
+
+    usedEmails.add(email);
+
+    /* ---------------- ADDRESS ---------------- */
+
+    if (address.length < 5) {
+      alert(
+        `Member ${i + 1}: Address too short`
+      );
+      return;
+    }
+
+    // Prevent suspicious symbols
+    if (/[<>]/.test(address)) {
+      alert(
+        `Member ${i + 1}: Invalid address`
+      );
+      return;
+    }
+
+    /* ---------------- SAVE CLEAN DATA ---------------- */
+
+    membersData[i] = {
+      name,
+      age,
+      phone,
+      email,
+      address
+    };
+  }
+
+  /* ---------------- SAVE FIREBASE ---------------- */
+
+  await saveBooking({
+    tripName: destinationName,
+    createdAt: new Date().toISOString().split("T")[0],
+    members: membersData
+  });
+
+  setStep("links");
+};
 
   /* ✅ FIXED WhatsApp */
   const sendWhatsApp = (number: string) => {
