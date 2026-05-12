@@ -273,10 +273,16 @@ const deleteTrip = async (id: string) => {
 
  <button
   onClick={() => {
-    const trip = bookings.find(
-      b =>
-        b.tripName?.trim().toLowerCase() ===
-        dest.name?.trim().toLowerCase()
+     const trip = bookings.find((b) =>
+      (b.tripName || "")
+        .toLowerCase()
+        .replace(/\s+/g, "")
+        .trim()
+      ===
+      (dest.name || "")
+        .toLowerCase()
+        .replace(/\s+/g, "")
+        .trim()
     );
 
     console.log("DEST:", dest.name);
@@ -292,13 +298,6 @@ const deleteTrip = async (id: string) => {
 >
   Download CSV
 </button>
-
-  <button
-    onClick={() => dest.id && deleteTrip(dest.id)}
-    className="bg-red-600 text-white px-3 py-1 rounded-lg text-sm"
-  >
-    Delete Trip DATA
-  </button>
 
 </div>
 
