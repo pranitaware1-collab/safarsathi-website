@@ -48,13 +48,17 @@ const exportTripData = async (tripName: string) => {
     ...doc.data()
   }));
 
-  const trip = data.find(
-    (t: any) =>
-      t.tripName?.toLowerCase().trim() ===
-      tripName.toLowerCase().trim()
+  const trip = data.find((t: any) =>
+    (t.tripName || "").trim().toLowerCase() ===
+    tripName.trim().toLowerCase()
   );
 
-  console.log(trip);
+  if (!trip) {
+    alert("No booking found");
+    return;
+  }
+
+  downloadCSV(trip);
 };
 
 const deleteTrip = async (id: string) => {
@@ -110,9 +114,7 @@ const deleteTrip = async (id: string) => {
 
   /* AUTH */
   useEffect(() => {
-  // Firebase / API call इथे येईल
-  // example:
-  setBookings([]); // replace with real data
+  fetchBookings();
 }, []);
   useEffect(() => {
     if (!isAuthorized) navigate('/admin/login', { replace: true });
@@ -143,7 +145,7 @@ const deleteTrip = async (id: string) => {
   await deleteDestination(id);
 };
 const downloadCSV = (trip: any) => {
-  if (!trip || !trip.members || trip.members.length === 0) {
+  if (!trip?.members?.length) {
     alert("No booking data available");
     return;
   }
@@ -151,11 +153,11 @@ const downloadCSV = (trip: any) => {
   const headers = ["Name", "Age", "Phone", "Email", "Address"];
 
   const rows = trip.members.map((m: any) => [
-    m.name || "",
-    m.age || "",
-    m.phone || "",
-    m.email || "",
-    m.address || ""
+    m.name,
+    m.age,
+    m.phone,
+    m.email,
+    m.address
   ]);
 
   const csvContent = [
@@ -163,18 +165,17 @@ const downloadCSV = (trip: any) => {
     ...rows.map((r: any) => r.join(","))
   ].join("\n");
 
-  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+  const blob = new Blob([csvContent], {
+    type: "text/csv;charset=utf-8;"
+  });
 
   const url = URL.createObjectURL(blob);
 
-  const link = document.createElement("a");
-  link.href = url;
-  link.setAttribute("download", `${trip.tripName || "booking"}.csv`);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `${trip.tripName}.csv`;
 
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-
+  a.click();
   URL.revokeObjectURL(url);
 };
 
