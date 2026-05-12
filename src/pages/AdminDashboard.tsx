@@ -10,6 +10,31 @@ import { cn } from '../lib/utils';
 import { Booking } from '../types';
 import { getNotice, updateNotice } from '../services/settingsService';
 
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "../firebase"; // तुमचा firebase config path
+const [bookings, setBookings] = useState<Booking[]>([]);
+
+const fetchBookings = async () => {
+  try {
+    const querySnapshot = await getDocs(collection(db, "bookings"));
+
+    const data: any[] = [];
+
+    querySnapshot.forEach((doc) => {
+      data.push({
+        id: doc.id,
+        ...doc.data(),
+      });
+    });
+
+    console.log("🔥 FIREBASE DATA:", data);
+
+    setBookings(data);
+  } catch (error) {
+    console.error("Firebase fetch error:", error);
+  }
+};
+
 /* ---------------- DRIVE HELPERS ---------------- */
 const convertDriveImage = (url: string) => {
   if (!url) return url;
@@ -35,6 +60,7 @@ export const AdminDashboard = () => {
 
   const navigate = useNavigate();
   const location = useLocation();
+  
 
   const isAuthorized = isAdmin || location.state?.authorized;
 
@@ -47,8 +73,10 @@ export const AdminDashboard = () => {
 
   const [notice, setNotice] = useState('');
 
-  const [bookings, setBookings] = useState<Booking[]>([]);
 
+useEffect(() => {
+  fetchBookings();
+}, []);
   /* AUTH */
   useEffect(() => {
   // Firebase / API call इथे येईल
