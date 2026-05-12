@@ -261,7 +261,7 @@ ${membersText}
           />
 
           {/* MODAL */}
-          <motion.div className="relative w-full max-w-lg bg-white rounded-3xl">
+         <motion.div className="relative w-full max-w-lg bg-white rounded-3xl max-h-[90vh] overflow-y-auto">
 
             <div className="p-8">
 
