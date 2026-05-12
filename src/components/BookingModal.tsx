@@ -91,7 +91,14 @@ export const BookingModal = ({
   const sendWhatsApp = (number: string) => {
     if (hasSentWa1) return;
 
-    const message = `
+    const membersText = membersData
+  .map(
+    (m, index) =>
+      `${index + 1}. ${m.name} - ${m.phone}`
+  )
+  .join("\n");
+
+const message = `
 Hello Suyog Aware,
 
 New Trip Booking Request
@@ -99,6 +106,9 @@ New Trip Booking Request
 Trip: ${destinationName}
 
 Total Members: ${formData.members}
+
+Members Details:
+${membersText}
 `;
 
     window.open(
@@ -108,9 +118,11 @@ Total Members: ${formData.members}
 
     setHasSentWa1(true);
 
-    setTimeout(() => {
-      setBookingDone(true);
-    }, 1000);
+   setTimeout(() => {
+  setBookingDone(true);
+
+  window.location.href = "/";
+}, 5000);
   };
 
   return (
@@ -148,8 +160,9 @@ Total Members: ${formData.members}
               ) : step === "links" ? (
                 <div>
                   <button
-                    onClick={() => sendWhatsApp("917972519926")}
-                    className="bg-green-600 text-white w-full py-3 rounded-xl"
+  disabled={hasSentWa1}
+  onClick={() => sendWhatsApp("917972519926")}
+                    className="bg-green-600 text-white w-full py-3 rounded-xl disabled:opacity-50"
                   >
                     Confirm WhatsApp
                   </button>
