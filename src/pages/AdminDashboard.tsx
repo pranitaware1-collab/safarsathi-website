@@ -48,17 +48,20 @@ const exportTripData = async (tripName: string) => {
     ...doc.data()
   }));
 
-  const trip = data.find((t: any) =>
+  const trip = data.filter((t: any) =>
     (t.tripName || "").trim().toLowerCase() ===
     tripName.trim().toLowerCase()
   );
 
-  if (!trip) {
+  if (trip.length === 0) {
     alert("No booking found");
     return;
   }
 
-  downloadCSV(trip);
+  downloadCSV({
+  tripName,
+  members: trip.flatMap((t: any) => t.members || [])
+});
 };
 
 const deleteTrip = async (id: string) => {
