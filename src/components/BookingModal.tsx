@@ -48,6 +48,20 @@ export const BookingModal = ({
     setMembersData(arr);
   }, [formData.members]);
 
+  useEffect(() => {
+
+  const done =
+    localStorage.getItem("bookingDone");
+
+  if (done === "true") {
+
+    setBookingDone(true);
+
+    localStorage.removeItem("bookingDone");
+  }
+
+}, []);
+
   /* ✅ VALIDATION + SAVE */
   const handleNext = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -89,16 +103,15 @@ export const BookingModal = ({
 
   /* ✅ FIXED WhatsApp */
   const sendWhatsApp = (number: string) => {
-    if (hasSentWa1) return;
 
-    const membersText = membersData
-  .map(
-    (m, index) =>
-      `${index + 1}. ${m.name} - ${m.phone}`
-  )
-  .join("\n");
+  const membersText = membersData
+    .map(
+      (m, i) =>
+        `${i + 1}. ${m.name} - ${m.phone}`
+    )
+    .join("\n");
 
-const message = `
+  const message = `
 Hello Suyog Aware,
 
 New Trip Booking Request
@@ -107,14 +120,13 @@ Trip: ${destinationName}
 
 Total Members: ${formData.members}
 
-Members Details:
 ${membersText}
 `;
 
-    window.open(
-      `https://wa.me/${number}?text=${encodeURIComponent(message)}`,
-      "_blank"
-    );
+  localStorage.setItem("bookingDone", "true");
+
+  window.location.href =
+    `https://wa.me/${number}?text=${encodeURIComponent(message)}`;
 
     setHasSentWa1(true);
 
@@ -144,9 +156,14 @@ ${membersText}
 
             <div className="p-8">
 
-              <button onClick={onClose} className="absolute top-4 right-4">
-                <X />
-              </button>
+             {step === "form" && (
+  <button
+    onClick={onClose}
+    className="absolute top-4 right-4"
+  >
+    <X />
+  </button>
+)}
 
               {/* SUCCESS */}
               {bookingDone ? (
@@ -164,7 +181,7 @@ ${membersText}
   onClick={() => sendWhatsApp("917972519926")}
                     className="bg-green-600 text-white w-full py-3 rounded-xl disabled:opacity-50"
                   >
-                    Confirm WhatsApp
+                    Conformation on  WhatsApp
                   </button>
                 </div>
               ) : (
