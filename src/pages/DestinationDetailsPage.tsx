@@ -165,15 +165,7 @@ export const DestinationDetailsPage = () => {
             Book Trip
           </button>
 
-          {destination.googleSheetUrl && (
-            <a
-              href={destination.googleSheetUrl}
-              target="_blank"
-              className="block text-center bg-green-100 text-green-700 py-3 rounded-xl font-bold"
-            >
-              Book via Google Sheet
-            </a>
-          )}
+          
 
           {destination.itineraryPdfUrl && (
             <a
