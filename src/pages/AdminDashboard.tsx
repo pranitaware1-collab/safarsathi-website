@@ -84,28 +84,39 @@ export const AdminDashboard = () => {
   await deleteDestination(id);
 };
 const downloadCSV = (trip: any) => {
+  if (!trip || !trip.members || trip.members.length === 0) {
+    alert("No booking data available");
+    return;
+  }
+
   const headers = ["Name", "Age", "Phone", "Email", "Address"];
 
   const rows = trip.members.map((m: any) => [
-    m.name,
-    m.age,
-    m.phone,
-    m.email,
-    m.address
+    m.name || "",
+    m.age || "",
+    m.phone || "",
+    m.email || "",
+    m.address || ""
   ]);
 
-  const csvContent =
-    [headers, ...rows].map((r) => r.join(",")).join("\n");
+  const csvContent = [
+    headers.join(","),
+    ...rows.map((r: any) => r.join(","))
+  ].join("\n");
 
-  const blob = new Blob([csvContent], { type: "text/csv" });
-  const url = window.URL.createObjectURL(blob);
+  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
 
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = `${trip.tripName}.csv`;
-  a.click();
+  const url = URL.createObjectURL(blob);
 
-  window.URL.revokeObjectURL(url);
+  const link = document.createElement("a");
+  link.href = url;
+  link.setAttribute("download", `${trip.tripName || "booking"}.csv`);
+
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+
+  URL.revokeObjectURL(url);
 };
 const deleteTrip = async (id: string) => {
   const confirmDelete = window.confirm(
@@ -231,24 +242,22 @@ const deleteTrip = async (id: string) => {
 
                   <div className="flex gap-2 mt-2">
 
-  <button
+ <button
   onClick={() => {
-  const trip = bookings.find((b: Booking) => b.tripName === dest.name);
-
-  if (trip) {
-    downloadCSV(trip);
-  }
-}}
-    className="bg-green-600 text-white px-3 py-1 rounded-lg text-sm"
-  >
-    Download CSV
-  </button>
+    const trip = bookings.find(b => b.tripName === dest.name);
+    console.log("TRIP FOUND:", trip); // debug
+    if (trip) downloadCSV(trip);
+    else alert("Booking not found");
+  }}
+>
+  Download CSV
+</button>
 
   <button
     onClick={() => dest.id && deleteTrip(dest.id)}
     className="bg-red-600 text-white px-3 py-1 rounded-lg text-sm"
   >
-    Delete Trip
+    Delete Trip DATA
   </button>
 
 </div>
