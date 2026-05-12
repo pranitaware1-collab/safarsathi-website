@@ -193,7 +193,7 @@ export const DestinationDetailsPage = () => {
         isOpen={isBookingModalOpen}
         onClose={() => setIsBookingModalOpen(false)}
         destinationName={destination.name}
-        bookingFormUrl={destination.bookingFormUrl}
+      
       />
 
     </div>
