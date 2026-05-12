@@ -10,10 +10,15 @@ import { cn } from '../lib/utils';
 import { Booking } from '../types';
 import { getNotice, updateNotice } from '../services/settingsService';
 
-import { collection, getDocs } from "firebase/firestore";
-import { db } from "../firebase"; // तुमचा firebase config path
-import { doc, deleteDoc } from "firebase/firestore";
-
+import {
+  collection,
+  getDocs,
+  deleteDoc,
+  doc,
+  query,
+  where
+} from "firebase/firestore";
+import { db } from "../firebase";
 
 
 
@@ -64,16 +69,31 @@ const exportTripData = async (tripName: string) => {
 });
 };
 
-const deleteTrip = async (id: string) => {
-  const confirmDelete = window.confirm("Delete this trip?");
+const deleteTrip = async (tripName: string) => {
+  const confirmDelete = window.confirm(
+    "Are you sure you want to delete this trip?"
+  );
 
   if (!confirmDelete) return;
 
   try {
-    await deleteDoc(doc(db, "bookings", id));
+    const q = query(
+      collection(db, "bookings"),
+      where("tripName", "==", tripName)
+    );
+
+    const querySnapshot = await getDocs(q);
+
+    querySnapshot.forEach(async (document) => {
+      await deleteDoc(doc(db, "bookings", document.id));
+    });
+
     alert("Trip deleted successfully");
-  } catch (err) {
-    console.error(err);
+
+    fetchBookings();
+
+  } catch (error) {
+    console.error("Delete Error:", error);
     alert("Delete failed");
   }
 };
@@ -311,7 +331,7 @@ const downloadCSV = (trip: any) => {
 
   {/* DELETE TRIP */}
   <button
-    onClick={() => dest.id && deleteTrip(dest.id)}
+  onClick={() => deleteTrip(dest.name)}
     className="bg-red-600 text-white px-3 py-1 rounded-lg text-sm"
   >
     Delete Trip
