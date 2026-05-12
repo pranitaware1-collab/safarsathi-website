@@ -12,6 +12,7 @@ import { getNotice, updateNotice } from '../services/settingsService';
 
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../firebase"; // तुमचा firebase config path
+import { doc, deleteDoc } from "firebase/firestore";
 
 
 
@@ -39,7 +40,36 @@ export const AdminDashboard = () => {
   deleteDestination
 } = useDestinations();
  const [bookings, setBookings] = useState<Booking[]>([]);
+const exportTripData = async (tripName: string) => {
+  const snap = await getDocs(collection(db, "bookings"));
 
+  const data = snap.docs.map(doc => ({
+    id: doc.id,
+    ...doc.data()
+  }));
+
+  const trip = data.find(
+    (t: any) =>
+      t.tripName?.toLowerCase().trim() ===
+      tripName.toLowerCase().trim()
+  );
+
+  console.log(trip);
+};
+
+const deleteTrip = async (id: string) => {
+  const confirmDelete = window.confirm("Delete this trip?");
+
+  if (!confirmDelete) return;
+
+  try {
+    await deleteDoc(doc(db, "bookings", id));
+    alert("Trip deleted successfully");
+  } catch (err) {
+    console.error(err);
+    alert("Delete failed");
+  }
+};
  const fetchBookings = async () => {
   try {
     const querySnapshot = await getDocs(collection(db, "bookings"));
@@ -147,15 +177,7 @@ const downloadCSV = (trip: any) => {
 
   URL.revokeObjectURL(url);
 };
-const deleteTrip = async (id: string) => {
-  const confirmDelete = window.confirm(
-    "Are you sure you want to delete this trip?"
-  );
 
-  if (!confirmDelete) return;
-
-  console.log("Delete trip:", id);
-};
   /* ADD */
   const handleAdd = () => {
     setIsAdding(true);
@@ -262,6 +284,7 @@ const deleteTrip = async (id: string) => {
 
             {/* LIST */}
             {filtered.map(dest => (
+              
               <div key={dest.id} className="bg-white border rounded-xl p-4 mb-3 flex justify-between">
 
                 <div>
@@ -271,33 +294,26 @@ const deleteTrip = async (id: string) => {
 
                   <div className="flex gap-2 mt-2">
 
- <button
-  onClick={() => {
-     const trip = bookings.find((b) =>
-      (b.tripName || "")
-        .toLowerCase()
-        .replace(/\s+/g, "")
-        .trim()
-      ===
-      (dest.name || "")
-        .toLowerCase()
-        .replace(/\s+/g, "")
-        .trim()
-    );
+ 
+<div className="flex gap-2 mt-2">
 
-    console.log("DEST:", dest.name);
-    console.log("BOOKINGS:", bookings);
-    console.log("FOUND TRIP:", trip);
+  {/* DOWNLOAD CSV */}
+  <button
+    onClick={() => exportTripData(dest.name)}
+    className="bg-green-600 text-white px-3 py-1 rounded-lg text-sm"
+  >
+    Download CSV
+  </button>
 
-    if (trip) {
-      downloadCSV(trip);
-    } else {
-      alert("Booking not found");
-    }
-  }}
->
-  Download CSV
-</button>
+  {/* DELETE TRIP */}
+  <button
+    onClick={() => dest.id && deleteTrip(dest.id)}
+    className="bg-red-600 text-white px-3 py-1 rounded-lg text-sm"
+  >
+    Delete Trip
+  </button>
+
+</div>
 
 </div>
 
