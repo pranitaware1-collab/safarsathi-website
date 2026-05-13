@@ -127,16 +127,12 @@ export const HomePage = () => {
               "पैसे बँक मे नही यादो मे जमा करो"
             </p>
           </motion.div>
-           <motion.img
+        <motion.img
   src="/traveler.png"
   alt="Traveler"
-  animate={{
-    x: [0, 40, 0]
-  }}
-  transition={{
-    duration: 6,
-    repeat: Infinity
-  }}
+  initial={{ opacity: 0, scale: 0.8 }}
+  animate={{ opacity: 1, scale: 1 }}
+  transition={{ duration: 1 }}
   className="
     w-24
     md:w-36
