@@ -147,36 +147,7 @@ const handleCategorySelect = (category: string) => {
                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                  />
 
-  {/* ❤️ HEART BUTTON */}
-  <button
-  onClick={() => {
-    if (dest.id) {
-      toggleWishlist(dest.id);
-    }
-  }}
-  className="
-    absolute
-    top-4
-    right-4
-    z-20
-    bg-white/20
-    backdrop-blur-md
-    p-3
-    rounded-full
-    border
-    border-white/20
-    hover:scale-110
-    transition-all
-  "
->
-  <Heart
-    className={`w-5 h-5 ${
-      dest.id && wishlist.includes(dest.id)
-        ? 'fill-red-500 text-red-500'
-        : 'text-white'
-    }`}
-  />
-</button>
+  
                   <div className="absolute bottom-4 left-4 flex flex-col gap-2">
                     <span className="bg-indigo-600/90 backdrop-blur-md text-white text-xs font-bold px-3 py-1.5 rounded-lg uppercase tracking-wider w-fit">
                       {dest.category}
