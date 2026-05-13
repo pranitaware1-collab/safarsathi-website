@@ -122,7 +122,9 @@ export const HomePage = () => {
             transition={{ duration: 0.8, delay: 0.3 }}
             className="flex flex-col items-center mb-12"
           >
-            <span className="text-indigo-400 font-black uppercase tracking-[0.3em] text-sm md:text-lg mb-4">Tourism</span>
+           <span className="text-white font-black uppercase tracking-[0.2em] text-2xl md:text-4xl mb-4 block">
+            TOURISM
+           </span>
             <p className="text-xl md:text-2xl text-white/90 font-medium italic tracking-wide">
               "पैसे बँक मे नही यादो मे जमा करो"
             </p>
