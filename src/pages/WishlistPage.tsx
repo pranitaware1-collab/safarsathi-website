@@ -6,10 +6,28 @@ import { useAuth } from '../context/AuthContext';
 import { useDestinations } from '../context/DestinationContext';
 
 export const WishlistPage = () => {
-  const { wishlist, user } = useAuth();
+const { user } = useAuth();
+
+const [wishlist, setWishlist] = React.useState<string[]>([]);
   const { destinations } = useDestinations();
 
-  const favoriteDestinations = destinations.filter(d => wishlist.includes(d.id));
+  React.useEffect(() => {
+
+  const storedWishlist =
+    localStorage.getItem("wishlist");
+
+  if (storedWishlist) {
+
+    setWishlist(
+      JSON.parse(storedWishlist)
+    );
+  }
+
+}, []);
+const favoriteDestinations =
+  destinations.filter(
+    d => d.id && wishlist.includes(d.id)
+  );
 
   if (!user) {
     return (
