@@ -7,16 +7,16 @@ import { useDestinations } from '../context/DestinationContext';
 
 export const WishlistPage = () => {
 
-const { wishlist, user } = useAuth();
+  const { wishlist, user } = useAuth();
 
 
   const { destinations } = useDestinations();
 
-  
-const favoriteDestinations =
-  destinations.filter(
-    d => d.id && wishlist.includes(d.id)
-  );
+
+  const favoriteDestinations =
+    destinations.filter(
+      d => d.id && wishlist.includes(d.id)
+    );
 
   if (!user) {
     return (
@@ -28,8 +28,8 @@ const favoriteDestinations =
         <p className="text-gray-600 mb-8 text-center max-w-md">
           Please login to view and manage your favorite travel destinations.
         </p>
-        <Link 
-          to="/" 
+        <Link
+          to="/"
           className="bg-indigo-600 text-white px-8 py-3 rounded-full font-bold hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-100"
         >
           Go to Home
@@ -67,9 +67,9 @@ const favoriteDestinations =
                 className="group bg-white rounded-[2.5rem] overflow-hidden border border-gray-100 shadow-sm hover:shadow-2xl hover:shadow-indigo-100 transition-all duration-500"
               >
                 <Link to={`/destination/${dest.id}`} className="block relative h-72 overflow-hidden">
-                  <img 
-                    src={dest.image} 
-                    alt={dest.name} 
+                  <img
+                    src={dest.image}
+                    alt={dest.name}
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                     referrerPolicy="no-referrer"
                   />
@@ -93,7 +93,7 @@ const favoriteDestinations =
                       {dest.budgetEstimate}
                     </div>
                   </div>
-                  <Link 
+                  <Link
                     to={`/destination/${dest.id}`}
                     className="w-full flex items-center justify-center space-x-2 py-4 bg-gray-900 text-white rounded-2xl font-bold hover:bg-indigo-600 transition-all group/btn"
                   >
@@ -113,8 +113,8 @@ const favoriteDestinations =
             <p className="text-gray-500 mb-10 max-w-sm mx-auto">
               Start exploring beautiful destinations and save them to your wishlist to plan your next adventure.
             </p>
-            <Link 
-              to="/explore" 
+            <Link
+              to="/explore"
               className="inline-flex items-center space-x-2 bg-indigo-600 text-white px-10 py-4 rounded-2xl font-bold hover:bg-indigo-700 transition-all shadow-xl shadow-indigo-100"
             >
               <span>Explore Destinations</span>

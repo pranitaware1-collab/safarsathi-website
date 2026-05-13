@@ -4,11 +4,14 @@ import { X, Phone, CheckCircle2 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { saveBooking } from '../services/bookingService';
 
+
 interface BookingModalProps {
   isOpen: boolean;
   onClose: () => void;
   destinationName: string;
 }
+
+
 
 export const BookingModal = ({
   isOpen,
@@ -200,13 +203,12 @@ const handleNext = async (e: React.FormEvent) => {
   }
 
   /* ---------------- SAVE FIREBASE ---------------- */
-
-  await saveBooking({
-    tripName: destinationName,
-    createdAt: new Date().toISOString().split("T")[0],
-    members: membersData
-  });
-
+await saveBooking({
+  tripName: destinationName,
+  createdAt: new Date().toISOString().split("T")[0],
+  members: membersData
+});
+  
   setStep("links");
 };
 
@@ -290,7 +292,7 @@ ${membersText}
   onClick={() => sendWhatsApp("917972519926")}
                     className="bg-green-600 text-white w-full py-3 rounded-xl disabled:opacity-50"
                   >
-                    Conformation on  WhatsApp
+                    CONFIRMATION ON WHATSAPP
                   </button>
                 </div>
               ) : (

@@ -29,7 +29,7 @@ export const HomePage = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const { wishlist, toggleWishlist } = useAuth();
- 
+
 
 
 
@@ -41,7 +41,7 @@ export const HomePage = () => {
   };
 
   const popularDestinations = destinations.slice(0, 3);
-   const fullText = "SAFARSATHI ";
+  const fullText = "SAFARSATHI ";
   const [displayText, setDisplayText] = useState("");
 
   useEffect(() => {
@@ -72,9 +72,9 @@ export const HomePage = () => {
       {/* Hero Section */}
       <section className="relative h-[85vh] flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 z-0">
-          <img 
-            src="https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?auto=format&fit=crop&q=60&w=1200&fm=webp" 
-            alt="Hero" 
+          <img
+            src="https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?auto=format&fit=crop&q=60&w=1200&fm=webp"
+            alt="Hero"
             className="w-full h-full object-cover"
             referrerPolicy="no-referrer"
             fetchPriority="high"
@@ -101,54 +101,54 @@ export const HomePage = () => {
             transition={{ duration: 0.8 }}
             className="mb-6 flex justify-center"
           >
-            <img 
-              src="/logo.jpg" 
-              alt="SafarSathi Logo" 
+            <img
+              src="/logo.jpg"
+              alt="SafarSathi Logo"
               className="w-32 h-32 md:w-48 md:h-48 rounded-full object-cover border-4 border-white/30 shadow-2xl backdrop-blur-sm"
               onError={(e) => {
                 e.currentTarget.style.display = 'none';
               }}
             />
           </motion.div>
-       <motion.h1
-  initial={{ opacity: 0, y: 20 }}
-  animate={{ opacity: 1, y: 0 }}
-  transition={{ duration: 0.8, delay: 0.2 }}
-  className="text-6xl md:text-8xl font-black text-white mb-4 tracking-tighter uppercase"
->
-  {displayText}
-  <span className="animate-pulse">|</span>
-</motion.h1>
+          <motion.h1
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="text-6xl md:text-8xl font-black text-white mb-4 tracking-tighter uppercase"
+          >
+            {displayText}
+            <span className="animate-pulse">|</span>
+          </motion.h1>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.3 }}
             className="flex flex-col items-center mb-12"
           >
-           <span className="text-white font-black uppercase tracking-[0.2em] text-2xl md:text-4xl mb-4 block">
-            TOURISM
-           </span>
+            <span className="text-white font-black uppercase tracking-[0.2em] text-2xl md:text-4xl mb-4 block">
+              TOURISM
+            </span>
             <p className="text-xl md:text-2xl text-white/90 font-medium italic tracking-wide">
               "पैसे बँक मे नही यादो मे जमा करो"
             </p>
           </motion.div>
-        <motion.img
-  src="/traveler.png"
-  alt="Traveler"
-  initial={{ opacity: 0, scale: 0.8 }}
-  animate={{ opacity: 1, scale: 1 }}
-  transition={{ duration: 1 }}
-  className="
+          <motion.img
+            src="/traveler.png"
+            alt="Traveler"
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 1 }}
+            className="
     w-24
     md:w-36
     mx-auto
     mb-6
     drop-shadow-2xl
   "
-/>
+          />
 
 
-          <motion.form 
+          <motion.form
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
@@ -157,14 +157,14 @@ export const HomePage = () => {
           >
             <div className="relative flex items-center">
               <Search className="absolute left-6 text-gray-400 w-6 h-6 group-focus-within:text-indigo-500 transition-colors" />
-              <input 
-                type="text" 
-                placeholder="Where do you want to go?" 
+              <input
+                type="text"
+                placeholder="Where do you want to go?"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full pl-16 pr-32 py-6 rounded-2xl bg-white/95 backdrop-blur-md border-none shadow-2xl focus:ring-2 focus:ring-indigo-500 text-lg text-gray-900 placeholder:text-gray-400 transition-all"
               />
-              <button 
+              <button
                 type="submit"
                 className="absolute right-3 bg-indigo-600 text-white px-8 py-3 rounded-xl font-medium hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-200"
               >
@@ -229,20 +229,20 @@ export const HomePage = () => {
                 className="group bg-white rounded-[2rem] overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 border border-gray-100"
               >
                 <div className="relative h-72 overflow-hidden">
-                  <img 
-                    src={dest.image} 
-                    alt={dest.name} 
+                  <img
+                    src={dest.image}
+                    alt={dest.name}
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                     referrerPolicy="no-referrer"
                     loading="lazy"
                   />
                   <button
-  onClick={() => {
-    if (dest.id) {
-      toggleWishlist(dest.id);
-    }
-  }}
-  className="
+                    onClick={() => {
+                      if (dest.id) {
+                        toggleWishlist(dest.id);
+                      }
+                    }}
+                    className="
     absolute
     top-4
     right-4
@@ -256,15 +256,14 @@ export const HomePage = () => {
     hover:scale-110
     transition-all
   "
->
-  <Heart
-    className={`w-5 h-5 ${
-      dest.id && wishlist.includes(dest.id)
-        ? 'fill-red-500 text-red-500'
-        : 'text-white'
-    }`}
-  />
-</button>
+                  >
+                    <Heart
+                      className={`w-5 h-5 ${dest.id && wishlist.includes(dest.id)
+                        ? 'fill-red-500 text-red-500'
+                        : 'text-white'
+                        }`}
+                    />
+                  </button>
                   <div className="absolute bottom-4 left-4 flex flex-col gap-2">
                     <span className="bg-indigo-600/90 backdrop-blur-md text-white text-xs font-bold px-3 py-1.5 rounded-lg uppercase tracking-wider w-fit">
                       {dest.category}
@@ -289,7 +288,7 @@ export const HomePage = () => {
                       <span className="text-xs text-gray-400 block uppercase tracking-wider mb-1">Est. Budget</span>
                       <span className="text-lg font-bold text-indigo-600">{dest.budgetEstimate}</span>
                     </div>
-                    <Link 
+                    <Link
                       to={`/destination/${dest.id}`}
                       className="bg-gray-900 text-white p-3 rounded-xl hover:bg-indigo-600 transition-colors"
                     >
@@ -307,7 +306,7 @@ export const HomePage = () => {
       <section className="py-24 bg-indigo-900 relative overflow-hidden">
         <div className="absolute top-0 right-0 w-96 h-96 bg-indigo-500/20 rounded-full blur-[100px] -mr-48 -mt-48" />
         <div className="absolute bottom-0 left-0 w-96 h-96 bg-indigo-500/20 rounded-full blur-[100px] -ml-48 -mb-48" />
-        
+
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-20 items-center">
             <div>
