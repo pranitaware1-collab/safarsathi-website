@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+
 import { Search, MapPin, Star, ArrowRight, Compass, Mountain, Waves, Landmark, Building2, Church, Sparkles } from 'lucide-react';
 import { motion } from 'motion/react';
 import { Link, useNavigate } from 'react-router-dom';
@@ -7,6 +7,7 @@ import { CATEGORIES } from '@/src/constants';
 import { cn } from '@/src/lib/utils';
 import { useAuth } from '../context/AuthContext';
 import { FeedbackSection } from '../components/FeedbackSection';
+import React, { useState, useEffect } from 'react';
 
 
 const CategoryIcon = ({ category }: { category: string }) => {
@@ -25,6 +26,9 @@ export const HomePage = () => {
   const { destinations } = useDestinations();
   const { user } = useAuth();
   const navigate = useNavigate();
+ 
+
+
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -34,6 +38,31 @@ export const HomePage = () => {
   };
 
   const popularDestinations = destinations.slice(0, 3);
+   const fullText = "SAFARSATHI TOURISM";
+  const [displayText, setDisplayText] = useState("");
+
+  useEffect(() => {
+
+    let index = 0;
+
+    const interval = setInterval(() => {
+
+      setDisplayText(
+        fullText.slice(0, index)
+      );
+
+      index++;
+
+      if (index > fullText.length) {
+        index = 0;
+      }
+
+    }, 150);
+
+    return () => clearInterval(interval);
+
+  }, []);
+
 
   return (
     <div className="pt-16">
@@ -78,34 +107,14 @@ export const HomePage = () => {
               }}
             />
           </motion.div>
-        <motion.h1
+       <motion.h1
   initial={{ opacity: 0, y: 20 }}
-  animate={{
-    opacity: 1,
-    y: [0, -8, 0],
-    scale: [1, 1.02, 1]
-  }}
-  transition={{
-    duration: 4,
-    repeat: Infinity
-  }}
-  className="
-    text-6xl
-    md:text-8xl
-    font-black
-    mb-4
-    tracking-tighter
-    uppercase
-    text-transparent
-    bg-clip-text
-    bg-gradient-to-r
-    from-indigo-400
-    via-pink-400
-    to-orange-300
-    drop-shadow-2xl
-  "
+  animate={{ opacity: 1, y: 0 }}
+  transition={{ duration: 0.8, delay: 0.2 }}
+  className="text-6xl md:text-8xl font-black text-white mb-4 tracking-tighter uppercase"
 >
-  SAFARSATHI
+  {displayText}
+  <span className="animate-pulse">|</span>
 </motion.h1>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
