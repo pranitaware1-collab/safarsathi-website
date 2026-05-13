@@ -38,7 +38,7 @@ export const HomePage = () => {
   };
 
   const popularDestinations = destinations.slice(0, 3);
-   const fullText = "SAFARSATHI TOURISM";
+   const fullText = "SAFARSATHI ";
   const [displayText, setDisplayText] = useState("");
 
   useEffect(() => {
