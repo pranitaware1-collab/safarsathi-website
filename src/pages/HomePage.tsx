@@ -57,7 +57,7 @@ export const HomePage = () => {
         index = 0;
       }
 
-    }, 150);
+    }, 300);
 
     return () => clearInterval(interval);
 
